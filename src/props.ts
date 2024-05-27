@@ -1,8 +1,8 @@
 export abstract class Prop<T> {
-  protected thisDefaultValue: T | undefined;
+  protected _defaultValue: T | undefined;
 
   defaultValue(value: T): this {
-    this.thisDefaultValue = value;
+    this._defaultValue = value;
     return this;
   }
 

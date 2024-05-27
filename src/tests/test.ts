@@ -3,7 +3,7 @@ import { eb } from "../index";
 const someComponent = eb.definition({
   id: "someComponent",
   schema: eb.schema({
-    name: eb.string().defaultValue("bob"),
+    name: eb.string(),
     height: eb.number().defaultValue(42),
   }),
   styles: ({ values }) => {
@@ -21,6 +21,7 @@ const someComponent = eb.definition({
 
 const def = someComponent.def();
 
+console.log(def);
 // def returns a NoCodeComponentDefinition
 // {
 //   id: "someComponent",
@@ -29,9 +30,9 @@ const def = someComponent.def();
 //       prop: "name",
 //       type: "string",
 //     }, {
-//       prop: "age",
+//       prop: "height",
 //       type: "number",
+//       defaultValue: 42,
 //     }
 //   ],
-//   styles: [Function: styles],
 // }

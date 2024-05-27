@@ -36,10 +36,16 @@ export class Definition<T extends { [key: string]: any }> {
 
     const schemaProps: SchemaProp[] = Object.entries(schemaDefinition).map(
       ([key, value]) => {
-        return {
+        const result: SchemaProp = {
           prop: key,
           type: value.typename,
         };
+
+        if (value._defaultValue !== undefined) {
+          result.defaultValue = value._defaultValue;
+        }
+
+        return result;
       }
     );
 
