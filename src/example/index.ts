@@ -13,7 +13,10 @@ const someComponent = eb.definition({
       top: eb.number().responsive(), // set as responsive
       right: eb.number(),
     }),
-    name: eb.string().buildOnly(),
+    name: eb
+      .string()
+      .buildOnly()
+      .normalize((value) => value.toUpperCase()), // use normalize
     height: eb.number().defaultValue({ $res: true, sm: 45 }), // set a default value for one of the responsive values
   }),
   styles: ({ values }) => {

@@ -21,7 +21,6 @@ export abstract class Prop<T> {
   protected _hideLabel: boolean = false;
   protected _description: string | undefined;
   protected _visible: boolean = true;
-  protected _group: string | undefined;
   protected _layout: "row" | "column" | undefined;
 
   defaultValue(value: T): this {
@@ -45,6 +44,48 @@ export abstract class Prop<T> {
   }
 
   abstract get typename(): string;
+
+  abstract get getConfig(): unknown;
+
+  getBaseConfig(): {
+    defaultValue?: T;
+    buildOnly: boolean;
+    responsive: boolean;
+    label?: string;
+    hideLabel: boolean;
+    description?: string;
+    visible: boolean;
+    layout?: "row" | "column";
+  } {
+    const config: {
+      buildOnly: boolean;
+      responsive: boolean;
+      hideLabel: boolean;
+      visible: boolean;
+      defaultValue?: T; // Add defaultValue property
+      label?: string;
+      description?: string;
+      layout?: "row" | "column";
+    } = {
+      buildOnly: this._buildOnly,
+      responsive: this._responsive,
+      hideLabel: this._hideLabel,
+      visible: this._visible,
+    };
+    if (this._defaultValue !== undefined) {
+      config.defaultValue = this._defaultValue;
+    }
+    if (this._label !== undefined) {
+      config.label = this._label;
+    }
+    if (this._description !== undefined) {
+      config.description = this._description;
+    }
+    if (this._layout !== undefined) {
+      config.layout = this._layout;
+    }
+    return config;
+  }
 }
 
 interface ResponsiveProp {
@@ -55,12 +96,34 @@ export class StringProp
   extends Prop<ResponsiveValue<string>>
   implements ResponsiveProp
 {
+  protected _normalize: ((value: string) => string) | undefined;
+
   get typename(): string {
     return "string";
   }
 
   responsive(): this {
     return this;
+  }
+
+  normalize(callback: (value: string) => string): this {
+    this._normalize = callback;
+    return this;
+  }
+
+  get getConfig() {
+    const config: Omit<StringSchemaProp, "prop"> = {
+      type: "string",
+      ...this.getBaseConfig(),
+    };
+
+    if (this._normalize) {
+      config.params = {
+        ...(config.params || {}),
+        normalize: this._normalize,
+      };
+    }
+    return config;
   }
 }
 
@@ -76,12 +139,46 @@ export class NumberProp
   extends Prop<ResponsiveValue<number>>
   implements ResponsiveProp
 {
+  private _min: number | undefined;
+  private _max: number | undefined;
+
   get typename(): string {
     return "number";
   }
 
   responsive(): this {
     return this;
+  }
+
+  min(value: number): this {
+    return this;
+  }
+
+  max(value: number): this {
+    return this;
+  }
+
+  get getConfig() {
+    const config: Omit<NumberSchemaProp, "prop"> = {
+      type: "number",
+      ...this.getBaseConfig(),
+    };
+
+    if (this._min) {
+      config.params = {
+        ...(config.params || {}),
+        min: this._min,
+      };
+    }
+
+    if (this._max) {
+      config.params = {
+        ...(config.params || {}),
+        max: this._max,
+      };
+    }
+
+    return config;
   }
 }
 
@@ -97,6 +194,8 @@ export type PropType =
   | StringProp
   | NumberProp
   | Group<{ [key: string]: PropType }>;
+
+export type PropTypeWithoutGroup = Exclude<PropType, Group<any>>;
 
 // [ ] BooleanSchemaProp
 // [ ] SelectSchemaProp

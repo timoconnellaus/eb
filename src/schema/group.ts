@@ -3,7 +3,7 @@ import type { PropType } from "./props";
 export class Group<T extends { [key: string]: PropType }> {
   // Ensure T is always an object with string keys
   private schema: T;
-  private isGroup = true;
+  isGroup = true;
   private _label: string | undefined;
 
   constructor(schemaDefinition: T) {
