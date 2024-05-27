@@ -132,7 +132,7 @@ export class StringProp
     return this;
   }
 
-  get getConfig() {
+  get getConfig(): Omit<StringSchemaProp, "prop"> {
     const config: Omit<StringSchemaProp, "prop"> = {
       type: "string",
       ...this.getBaseConfig(),
@@ -179,7 +179,7 @@ export class NumberProp
     return this;
   }
 
-  get getConfig() {
+  get getConfig(): Omit<NumberSchemaProp, "prop"> {
     const config: Omit<NumberSchemaProp, "prop"> = {
       type: "number",
       ...this.getBaseConfig(),
@@ -216,7 +216,7 @@ export class BooleanProp extends Prop<boolean> {
     return "boolean";
   }
 
-  get getConfig() {
+  get getConfig(): Omit<BooleanSchemaProp, "prop"> {
     const config: Omit<BooleanSchemaProp, "prop"> = {
       type: "boolean",
       ...this.getBaseConfig(),
@@ -307,7 +307,7 @@ export class SelectProp extends Prop<string> {
     return this;
   }
 
-  get getConfig() {
+  get getConfig(): Omit<SelectSchemaProp, "prop"> {
     const config: Omit<SelectSchemaProp, "prop"> = {
       type: "select",
       params: {
