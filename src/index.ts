@@ -1,4 +1,4 @@
-import { string, number } from "./schema/props";
+import { string, number, boolean } from "./schema/props";
 import { schema } from "./schema";
 import { definition } from "./definition";
 import type { Config, DeviceRange } from "@easyblocks/core";
@@ -27,5 +27,6 @@ export class EB {
   public schema = schema;
   public string = string;
   public number = number;
+  public boolean = boolean;
   public definition = definition;
 }

@@ -13,6 +13,7 @@ const someComponent = eb.definition({
       top: eb.number().responsive(), // set as responsive
       right: eb.number(),
     }),
+    trueOrFalse: eb.boolean().defaultValue(true),
     name: eb
       .string()
       .buildOnly()

@@ -1,4 +1,8 @@
-import type { StringSchemaProp, NumberSchemaProp } from "@easyblocks/core";
+import type {
+  StringSchemaProp,
+  NumberSchemaProp,
+  BooleanSchemaProp,
+} from "@easyblocks/core";
 import type { Group } from "./group";
 
 type ResponsiveValue<T> =
@@ -190,14 +194,31 @@ export class NumberProp
  */
 export const number = (): NumberProp => new NumberProp();
 
+export class BooleanProp extends Prop<boolean> {
+  get typename(): string {
+    return "boolean";
+  }
+
+  get getConfig() {
+    const config: Omit<BooleanSchemaProp, "prop"> = {
+      type: "boolean",
+      ...this.getBaseConfig(),
+    };
+
+    return config;
+  }
+}
+
+export const boolean = (): BooleanProp => new BooleanProp();
+
 export type PropType =
   | StringProp
   | NumberProp
+  | BooleanProp
   | Group<{ [key: string]: PropType }>;
 
 export type PropTypeWithoutGroup = Exclude<PropType, Group<any>>;
 
-// [ ] BooleanSchemaProp
 // [ ] SelectSchemaProp
 // [ ] RadioGroupSchemaProp
 // [ ] ColorSchemaProp
