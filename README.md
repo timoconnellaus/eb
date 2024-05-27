@@ -25,8 +25,13 @@ import { eb } from "../index";
 const someComponent = eb.definition({
   id: "someComponent",
   schema: eb.schema({
-    name: eb.string().defaultValue("bob"),
-    height: eb.number().defaultValue(42),
+    paddingGroup: eb.group({
+      // use groups
+      top: eb.number().responsive(), // set as responsive
+      right: eb.number(),
+    }),
+    name: eb.string().buildOnly(),
+    height: eb.number().defaultValue({ $res: true, sm: 45 }), // set a default value for one of the responsive values
   }),
   styles: ({ values }) => {
     const { name, height } = values; // these are typed
