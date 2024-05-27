@@ -57,6 +57,14 @@ export class Definition<T extends { [key: string]: any }> {
   }
 }
 
+/**
+ * Define an easyblocks no code component definition in a type-safe way.
+ *
+ * @param id the id of the component
+ * @param schema the schema of the component
+ * @param styles a styles function callback
+ * @returns a definition object - use the `def` method to get the NoCodeComponentDefinition object for easyblocks
+ */
 export const definition = <T extends { [key: string]: any }>(config: {
   id: string;
   schema: Schema<T>;

@@ -1,8 +1,5 @@
-import { StringProp, NumberProp } from "./props";
+import { string, number } from "./props";
 import { schema } from "./schema";
-import { definition, Definition } from "./definition";
-
-const string = () => new StringProp();
-const number = () => new NumberProp();
+import { definition } from "./definition";
 
 export const eb = { schema, string, number, definition };

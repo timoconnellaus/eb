@@ -13,6 +13,12 @@ export class Schema<T extends { [key: string]: any }> {
   }
 }
 
+/**
+ * Create a schema
+ *
+ * @param schemaDefinition the schema definition
+ * @returns a schema
+ */
 export const schema = <T extends { [key: string]: any }>(
   schemaDefinition: T
 ): Schema<T> => {
