@@ -1,10 +1,15 @@
-import { eb } from "../index";
+import { ebc } from "../config";
+import { EB } from "../index";
+
+const eb = new EB({
+  config: ebc({}),
+});
 
 const someComponent = eb.definition({
   id: "someComponent",
   schema: eb.schema({
-    name: eb.string(),
-    height: eb.number().defaultValue(42),
+    name: eb.string().buildOnly(),
+    height: eb.number().defaultValue({ $res: true, sm: 45 }),
   }),
   styles: ({ values }) => {
     const { name, height } = values; // these are typed
@@ -36,3 +41,9 @@ console.log(def);
 //     }
 //   ],
 // }
+
+// Reponsive values are typed correctly
+const numberProp = eb.number().defaultValue({ $res: true, sm: 45 });
+
+// access the config values so that they can be used in the easyblocks config object
+const devices = eb.getConfig().getDevicesArray(); // DeviceRange[]

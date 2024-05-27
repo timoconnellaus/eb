@@ -3,7 +3,7 @@ import type {
   NoCodeComponentStylesFunctionResult,
   SchemaProp,
 } from "@easyblocks/core";
-import type { Prop } from "./props";
+import type { Prop } from "./schema/props";
 import { Schema } from "./schema";
 
 type SchemaValues<T> = {
@@ -43,6 +43,10 @@ export class Definition<T extends { [key: string]: any }> {
 
         if (value._defaultValue !== undefined) {
           result.defaultValue = value._defaultValue;
+        }
+
+        if (value._buildOnly) {
+          result.buildOnly = true;
         }
 
         return result;

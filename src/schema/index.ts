@@ -1,5 +1,3 @@
-import type { Prop } from "./props";
-
 export class Schema<T extends { [key: string]: any }> {
   // Ensure T is always an object with string keys
   private schema: T;

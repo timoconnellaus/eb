@@ -9,11 +9,17 @@ Key features:
 - Typesafe styles function
 - Chained functions (easier to read)
 
-Note that this is currently incomplete and a work in progress.
+Note: that this is currently incomplete and a work in progress
+
+- bun `bunx jsr add @timoconnellaus/eb`
+- pnpm `pnpm dlx jsr add @timoconnellaus/eb`
+- yarn `yarn dlx jsr add @timoconnellaus/eb`
+- npm `npx jsr add @timoconnellaus/eb`
+- deno `deno add @timoconnellaus/eb`
 
 <img width="402" alt="image" src="https://github.com/timoconnellaus/easyblocks-typed/assets/3151605/ef8a67b3-570f-4912-b6b2-63ddf370d0fd">
 
-```JS
+```TS
 import { eb } from "../index";
 
 const someComponent = eb.definition({
@@ -51,4 +57,20 @@ const def = someComponent.def();
 //   ],
 //   styles: [Function: styles],
 // }
+
+// define devices so that types can be inferred
+const eb = new EB({
+  config: ebc({
+    devices: {
+      sm: {
+        w: 640,
+        h: 480,
+        breakpoint: 640,
+      },
+    },
+  }),
+});
+
+// Reponsive values are typed correctly
+const numberProp = eb.number().defaultValue({ $res: true, sm: 45 });
 ```
