@@ -1,5 +1,5 @@
 {
   "name": "@timoconnellaus/eb",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "exports": "./src/index.ts"
 }
