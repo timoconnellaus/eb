@@ -19,7 +19,7 @@ Note: that this is currently incomplete and a work in progress
 
 <img width="402" alt="image" src="https://github.com/timoconnellaus/easyblocks-typed/assets/3151605/ef8a67b3-570f-4912-b6b2-63ddf370d0fd">
 
-```TS
+```ts
 import { eb } from "../index";
 
 const someComponent = eb.definition({

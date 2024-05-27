@@ -5,6 +5,8 @@ import type {
 } from "@easyblocks/core";
 import type { Prop } from "./schema/props";
 import { Schema } from "./schema";
+import { type group as GroupType, group } from "./schema/group";
+import camelCaseToLabel from "./helpers/camelCaseToLabel";
 
 type SchemaValues<T> = {
   [P in keyof T]: T[P] extends Prop<infer U> ? U : never;
@@ -33,9 +35,29 @@ export class Definition<T extends { [key: string]: any }> {
 
   def(): NoCodeComponentDefinition<SchemaValues<T>> {
     const schemaDefinition = this.schema.getSchemaDefinition();
+    const schemaProps: SchemaProp[] = [];
 
-    const schemaProps: SchemaProp[] = Object.entries(schemaDefinition).map(
-      ([key, value]) => {
+    for (const [key, value] of Object.entries(schemaDefinition)) {
+      if (typeof value === "object" && value.isGroup) {
+        const groupSchema: typeof GroupType = value.getSchemaDefinition();
+        for (const [groupKey, groupValue] of Object.entries(groupSchema)) {
+          const result: SchemaProp = {
+            prop: groupKey,
+            type: groupValue.typename,
+            group: value.getLabel() ? value.getLabel() : camelCaseToLabel(key),
+          };
+
+          if (groupValue._defaultValue !== undefined) {
+            result.defaultValue = groupValue._defaultValue;
+          }
+
+          if (groupValue._buildOnly) {
+            result.buildOnly = true;
+          }
+
+          schemaProps.push(result);
+        }
+      } else {
         const result: SchemaProp = {
           prop: key,
           type: value.typename,
@@ -49,9 +71,9 @@ export class Definition<T extends { [key: string]: any }> {
           result.buildOnly = true;
         }
 
-        return result;
+        schemaProps.push(result);
       }
-    );
+    }
 
     return {
       id: this.id,

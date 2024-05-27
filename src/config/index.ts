@@ -1,18 +1,10 @@
 import type { DeviceRange } from "@easyblocks/core";
-import { xs, sm, lg, md, xl, xl2 } from "./defaultDevices";
+import { xs, sm, lg, md, xl, xl2 } from "./devices";
+import type { DeviceProps } from "./devices";
 
 // Note: Because easyblocks devices are opionated, we use that preset here
 // In the future it would make sense to allow for custom devices when easyblocks
 // supports that
-
-type DeviceProps = {
-  xs?: Omit<DeviceRange, "id">;
-  sm?: Omit<DeviceRange, "id">;
-  md?: Omit<DeviceRange, "id">;
-  lg?: Omit<DeviceRange, "id">;
-  xl?: Omit<DeviceRange, "id">;
-  "2xl"?: Omit<DeviceRange, "id">;
-};
 
 type EBCProps = {
   devices?: DeviceProps;

@@ -3,6 +3,7 @@ import { schema } from "./schema";
 import { definition } from "./definition";
 import type { Config, DeviceRange } from "@easyblocks/core";
 import { EBC } from "./config";
+import { group } from "./schema/group";
 
 type EBProps = {
   config?: EBC;
@@ -22,6 +23,7 @@ export class EB {
     return this.config;
   };
 
+  public group = group;
   public schema = schema;
   public string = string;
   public number = number;

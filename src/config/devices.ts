@@ -46,4 +46,13 @@ const xl2: Omit<DeviceRange, "id"> = {
   // hidden: true,
 };
 
-export { xs, sm, md, lg, xl, xl2 };
+export type DeviceProps = {
+  xs?: Omit<DeviceRange, "id">;
+  sm?: Omit<DeviceRange, "id">;
+  md?: Omit<DeviceRange, "id">;
+  lg?: Omit<DeviceRange, "id">;
+  xl?: Omit<DeviceRange, "id">;
+  "2xl"?: Omit<DeviceRange, "id">;
+};
+
+export { xs, sm, lg, md, xl, xl2 };

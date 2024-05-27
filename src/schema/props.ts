@@ -1,4 +1,5 @@
 import type { StringSchemaProp, NumberSchemaProp } from "@easyblocks/core";
+import type { Group } from "./group";
 
 type ResponsiveValue<T> =
   | {
@@ -15,6 +16,13 @@ type ResponsiveValue<T> =
 export abstract class Prop<T> {
   protected _defaultValue: T | undefined;
   protected _buildOnly: boolean = false;
+  protected _responsive: boolean = false;
+  protected _label: string | undefined;
+  protected _hideLabel: boolean = false;
+  protected _description: string | undefined;
+  protected _visible: boolean = true;
+  protected _group: string | undefined;
+  protected _layout: "row" | "column" | undefined;
 
   defaultValue(value: T): this {
     this._defaultValue = value;
@@ -26,12 +34,33 @@ export abstract class Prop<T> {
     return this;
   }
 
+  label(value: string): this {
+    this._label = value;
+    return this;
+  }
+
+  hideLabel(): this {
+    this._hideLabel = true;
+    return this;
+  }
+
   abstract get typename(): string;
 }
 
-export class StringProp extends Prop<ResponsiveValue<string>> {
+interface ResponsiveProp {
+  responsive(): this;
+}
+
+export class StringProp
+  extends Prop<ResponsiveValue<string>>
+  implements ResponsiveProp
+{
   get typename(): string {
     return "string";
+  }
+
+  responsive(): this {
+    return this;
   }
 }
 
@@ -43,9 +72,16 @@ export class StringProp extends Prop<ResponsiveValue<string>> {
  */
 export const string = (): StringProp => new StringProp();
 
-export class NumberProp extends Prop<ResponsiveValue<number>> {
+export class NumberProp
+  extends Prop<ResponsiveValue<number>>
+  implements ResponsiveProp
+{
   get typename(): string {
     return "number";
+  }
+
+  responsive(): this {
+    return this;
   }
 }
 
@@ -56,3 +92,25 @@ export class NumberProp extends Prop<ResponsiveValue<number>> {
  * @returns a number prop
  */
 export const number = (): NumberProp => new NumberProp();
+
+export type PropType =
+  | StringProp
+  | NumberProp
+  | Group<{ [key: string]: PropType }>;
+
+// [ ] BooleanSchemaProp
+// [ ] SelectSchemaProp
+// [ ] RadioGroupSchemaProp
+// [ ] ColorSchemaProp
+// [ ] SpaceSchemaProp
+// [ ] FontSchemaProp
+// [ ] StringTokenSchemaProp
+// [ ] IconSchemaProp
+// [ ] TextSchemaProp
+// [ ] ComponentSchemaProp
+// [ ] ComponentCollectionSchemaProp
+// [ ] ComponentCollectionLocalisedSchemaProp
+// [ ] PositionSchemaProp
+// [ ] ExternalSchemaProp
+// [ ] LocalSchemaProp
+// [ ] TokenSchemaProp
