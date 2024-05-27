@@ -19,7 +19,7 @@ const someComponent = eb.definition({
   },
 });
 
-const def = someComponent.def();
+const def = someComponent.def(); // returns a NoCodeComponentDefinition
 
 console.log(def);
 // def returns a NoCodeComponentDefinition

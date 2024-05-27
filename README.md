@@ -1,4 +1,4 @@
-# easyblocks-typed
+# eb - typesafe easyblocks no code component definitions
 
 This is a prototype for building a NoCodeComponentDefinition for easyblocks in a typesafe way.
 
