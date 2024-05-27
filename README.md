@@ -1,6 +1,6 @@
 # easyblocks-typed
 
-This is a prototype for building a NoCodeCompoenntDefinition for easyblocks in a typesafe way.
+This is a prototype for building a NoCodeComponentDefinition for easyblocks in a typesafe way.
 
 This doesn't replace the exisiting NoCodeComponentDefinition, but allows one to be defined in similar syntax to zod schemas and then output a NoCodeComponentDefinition.
 
