@@ -2,8 +2,25 @@ import type {
   StringSchemaProp,
   NumberSchemaProp,
   BooleanSchemaProp,
+  TextSchemaProp,
+  IconSchemaProp,
+  ComponentSchemaProp,
+  ComponentCollectionSchemaProp,
+  ComponentCollectionLocalisedSchemaProp,
+  PositionSchemaProp,
+  ExternalSchemaProp,
+  LocalSchemaProp,
+  TokenSchemaProp,
+  SelectSchemaProp,
+  Option,
+  RadioGroupSchemaProp,
+  ColorSchemaProp,
+  SpaceSchemaProp,
+  FontSchemaProp,
+  StringTokenSchemaProp,
 } from "@easyblocks/core";
 import type { Group } from "./group";
+import type { ComponentType } from "react";
 
 type ResponsiveValue<T> =
   | {
@@ -211,10 +228,129 @@ export class BooleanProp extends Prop<boolean> {
 
 export const boolean = (): BooleanProp => new BooleanProp();
 
+export class OptionsOption {
+  private _label: string | undefined;
+  private _icon:
+    | string
+    | ComponentType<{ size?: number; isStroke?: boolean }>
+    | undefined;
+  private _hideLabel: boolean = false;
+
+  label(value: string): this {
+    this._label = value;
+    return this;
+  }
+
+  icon(
+    value: string | ComponentType<{ size?: number; isStroke?: boolean }>
+  ): this {
+    this._icon = value;
+    return this;
+  }
+
+  hideLabel(): this {
+    this._hideLabel = true;
+    return this;
+  }
+  get getConfig(): Omit<Option, "value"> {
+    return {
+      label: this._label,
+      icon: this._icon,
+      hideLabel: this._hideLabel,
+    };
+  }
+}
+
+export const option = (): OptionsOption => new OptionsOption();
+
+export class Options<T extends { [key: string]: typeof option } | string[]> {
+  private _options: T;
+
+  constructor(options: T) {
+    this._options = options;
+  }
+
+  get options(): Option[] {
+    if (Array.isArray(this._options)) {
+      if (typeof this._options[0] === "string") {
+        return this._options;
+      } else {
+        const options: Option[] = [];
+        const values = Object.entries(this._options);
+        for (const [key, value] of values) {
+          options.push({
+            value: key,
+            ...value,
+          });
+        }
+        return options as Option[];
+      }
+    } else {
+      return [];
+    }
+  }
+}
+
+export const options = <T extends { [key: string]: typeof option } | string[]>(
+  options: T
+): Options<T> => new Options(options);
+
+export class SelectProp extends Prop<string> {
+  private _options: { [key: string]: Omit<Option, "value"> } | string[] = {};
+
+  get typename(): string {
+    return "select";
+  }
+
+  options(options: { [key: string]: Omit<Option, "value"> } | string[]): this {
+    this._options = options;
+    return this;
+  }
+
+  get getConfig() {
+    const config: Omit<SelectSchemaProp, "prop"> = {
+      type: "select",
+      params: {
+        options: [],
+      },
+      ...this.getBaseConfig(),
+    };
+
+    if (Array.isArray(this._options)) {
+      if (this._options.length === 0) {
+        config.params.options = [];
+      }
+      if (typeof this._options[0] === "string") {
+        config.params.options = this._options as string[];
+      }
+    } else if (typeof this._options === "object") {
+      const options: Option[] = [];
+      const values = Object.entries(this._options) as [
+        string,
+        Omit<Option, "value">
+      ][];
+      for (const [key, value] of values) {
+        options.push({
+          value: key,
+          ...value,
+        });
+      }
+      config.params.options = options;
+    } else {
+      config.params.options = [];
+    }
+
+    return config;
+  }
+}
+
+export const select = (): SelectProp => new SelectProp();
+
 export type PropType =
   | StringProp
   | NumberProp
   | BooleanProp
+  | SelectProp
   | Group<{ [key: string]: PropType }>;
 
 export type PropTypeWithoutGroup = Exclude<PropType, Group<any>>;

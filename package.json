@@ -6,7 +6,8 @@
     "@types/bun": "latest"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "@types/react": "^18.3.3"
   },
   "dependencies": {
     "@easyblocks/core": "^1.0.5"

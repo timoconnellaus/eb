@@ -19,6 +19,13 @@ const someComponent = eb.definition({
       .buildOnly()
       .normalize((value) => value.toUpperCase()), // use normalize
     height: eb.number().defaultValue({ $res: true, sm: 45 }), // set a default value for one of the responsive values
+    size: eb.select().options({
+      // verbose definition of options
+      sm: eb.option().label("Small"),
+      md: eb.option().label("Medium"),
+      lg: eb.option().label("Large"),
+    }),
+    anotherOption: eb.select().options(["a", "b"]), // simple string definitions of options
   }),
   styles: ({ values }) => {
     const { name, height } = values; // these are typed
@@ -35,7 +42,7 @@ const someComponent = eb.definition({
 
 const def = someComponent.def(); // returns a NoCodeComponentDefinition
 
-console.log(def);
+console.log(JSON.stringify(def, null, 2));
 // def returns a NoCodeComponentDefinition
 // {
 //   id: "someComponent",
