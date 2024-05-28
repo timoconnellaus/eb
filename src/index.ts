@@ -5,22 +5,12 @@ import type {
   StringSchemaProp,
   NumberSchemaProp,
   SelectSchemaProp,
+  Option,
 } from "@easyblocks/core";
 import { type ComponentType } from "react";
 import { z, ZodType, ZodEnum } from "zod";
 
-type Option = SelectSchemaProp["params"]["options"][number];
-
-type OptionConfig = {
-  label?: string;
-  hideLabel?: boolean;
-  icon?:
-    | string
-    | ComponentType<{
-        size?: number | undefined;
-        isStroke?: boolean | undefined;
-      }>;
-};
+type OptionConfig = Omit<Exclude<Option, string>, "value">;
 
 class OptionBuilder {
   private config: OptionConfig;
