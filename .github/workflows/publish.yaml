@@ -16,9 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
-      - name: Change directory to packages/eb
-        run: cd packages/eb
-        shell: bash
       - name: Publish to jsr
-        run: bun run publish
+        run: cd packages/eb && bun run publish
         shell: bash
