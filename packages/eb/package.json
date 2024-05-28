@@ -1,0 +1,21 @@
+{
+  "name": "eb",
+  "version": "0.0.36",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "publish": "npx jsr publish --allow-slow-types"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react": "^18.3.3",
+    "react": "^18.3.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@easyblocks/core": "^1.0.5",
+    "zod": "^3.23.8"
+  }
+}

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { ebc } from "./test copy";
+import { eb } from "eb";
 import { z } from "zod";
 
-const urlWidget = ebc
+const urlWidget = eb
   .widget(z.string()) // set the input type of the widget with zod
   .label("URL")
   .component((props) => {
@@ -30,7 +30,7 @@ const urlWidget = ebc
     );
   });
 
-const testConfig = ebc.config({
+const testConfig = eb.config({
   widgets: {
     url: urlWidget, // this widget's type will be available to use in a definition (correctly typed)
   },

@@ -19,27 +19,29 @@ class OptionBuilder {
     this.config = {};
   }
 
-  label(label: string) {
+  label(label: string): this {
     this.config.label = label;
     return this;
   }
 
-  hideLabel() {
+  hideLabel(): this {
     this.config.hideLabel = true;
     return this;
   }
 
-  icon(icon: string | ComponentType<{ size?: number; isStroke?: boolean }>) {
+  icon(
+    icon: string | ComponentType<{ size?: number; isStroke?: boolean }>
+  ): this {
     this.config.icon = icon;
     return this;
   }
 
-  build() {
+  build(): OptionConfig {
     return this.config;
   }
 }
 
-function option() {
+function option(): OptionBuilder {
   return new OptionBuilder();
 }
 
@@ -273,9 +275,30 @@ type Config<T extends Record<string, WidgetOutputType<any>>> = {
 
 type CustomProp<T> = BaseProp<ZodType<T, any, any>>;
 
+type ConfigReturnType<T extends Record<string, WidgetOutputType<any>>> = {
+  definitions: (
+    def: Record<string, DefinitionOutputType<any>>
+  ) => ConfigReturnType<T>;
+  build: () => Record<string, DefinitionOutputType<any>>;
+  definition: <U>(input: DefinitionInputType<U>) => DefinitionOutputType<U>;
+  schema: <U>(structure: {
+    [K in keyof U]: BaseProp<ZodType<U[K], any, any>> & ThisType<{}>;
+  }) => { zodType: ZodType<U, any, any>; structure: typeof structure };
+  select: typeof select;
+  string: typeof string;
+  number: typeof number;
+  custom: <
+    K extends keyof T,
+    V extends T[K] extends WidgetOutputType<infer U> ? U : never
+  >(
+    key: K
+  ) => CustomProp<V>;
+  option: typeof option;
+};
+
 function config<T extends Record<string, WidgetOutputType<any>>>(
   config: Config<T>
-) {
+): ConfigReturnType<T> {
   let definitions: Record<string, DefinitionOutputType<any>> = {};
 
   function custom<
@@ -355,7 +378,7 @@ function config<T extends Record<string, WidgetOutputType<any>>>(
   return self;
 }
 
-export const ebc = {
+export const eb = {
   config,
   widget,
 };
