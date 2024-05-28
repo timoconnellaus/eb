@@ -16,6 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
+      - name: Install dependencies
+        run: bun install
+        shell: bash
       - name: Publish to jsr
-        run: cd packages/eb && bun run publish
+        run: bun run publish
         shell: bash
