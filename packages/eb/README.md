@@ -19,37 +19,40 @@ Note: that this is currently incomplete and a work in progress
 
 <img width="402" alt="image" src="https://github.com/timoconnellaus/easyblocks-typed/assets/3151605/ef8a67b3-570f-4912-b6b2-63ddf370d0fd">
 
-TODO:
+### Progress
 
-General:
-[ ] Return an easyblocks config object
-[ ] Return an Easyblocks editor component
-[ ] Complete styles function
-[ ] Complete editing function
-[ ] Complete after auto function
-[ ] Define no code component inline typed with type safety
+#### General
 
-Widgets:
-[x] Typed widgets
+- [ ] Return an easyblocks config object
+- [ ] Return an Easyblocks editor component
+- [ ] Complete styles function
+- [ ] Complete editing function
+- [ ] Complete after auto function
+- [ ] Define no code component inline typed with type safety
 
-Prop types:
-[x] String prop
-[x] Number prop
-[x] Select prop
-[ ] Token support
-[ ] Boolean prop
-[ ] RadioGroup prop
-[ ] Color prop
-[ ] Space prop
-[ ] Font prop
-[ ] Icon prop
-[ ] Text prop
-[ ] Component prop
-[ ] ComponentCollection prop
-[ ] ComponentCollectionLocalised prop
-[ ] Position prop
-[ ] External prop
-[ ] Local prop
+#### Widgets
+
+- [x] Typed widgets
+
+#### Prop types
+
+- [x] String prop
+- [x] Number prop
+- [x] Select prop
+- [ ] Token support
+- [ ] Boolean prop
+- [ ] RadioGroup prop
+- [ ] Color prop
+- [ ] Space prop
+- [ ] Font prop
+- [ ] Icon prop
+- [ ] Text prop
+- [ ] Component prop
+- [ ] ComponentCollection prop
+- [ ] ComponentCollectionLocalised prop
+- [ ] Position prop
+- [ ] External prop
+- [ ] Local prop
 
 ```ts
 import { useEffect, useState } from "react";
