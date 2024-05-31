@@ -4,17 +4,18 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "publish": "npx jsr publish --allow-slow-types"
+    "publish": "npx jsr publish --allow-slow-types",
+    "publish:dryrun": "npx jsr publish --dry-run --allow-slow-types"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/react": "^18.3.3",
-    "react": "^18.3.1"
+    "@types/react": "^18.3.3"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "react": "^18.3.1",
     "@easyblocks/core": "^1.0.5",
     "zod": "^3.23.8"
   }

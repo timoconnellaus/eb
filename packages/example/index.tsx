@@ -1,64 +1,169 @@
-import { useEffect, useState } from "react";
-import { eb } from "eb";
 import { z } from "zod";
+import { eb } from "eb";
 
+// DEVICES
+const devices = eb
+  // initially set to default devices
+  .devices({
+    sm: eb.device().hidden(true), // change properties
+  })
+  .mainDevice("md"); // we can set the main device
+
+// WIDGETS
 const urlWidget = eb
-  .widget(z.string()) // set the input type of the widget with zod
-  .label("URL")
-  .component((props) => {
-    const [active, setActive] = useState(false);
-    const [value, setValue] = useState(props.value); // this is typed based on the zod type
+  .inlineWidget({
+    zodType: z.object({ val: z.string() }),
+    defaultValue: { val: "" },
+    component: (props) => {
+      return <>{props.value.val}</>;
+    },
+  })
+  .label("URL");
 
-    useEffect(() => {
-      if (!active) {
-        setValue(props.value);
-      }
-    });
+const urlWidgetTwo = eb
+  .inlineWidget({
+    zodType: z.object({ two: z.string() }),
+    defaultValue: { two: "" },
+    component: (props) => {
+      return <>{props.value.two}</>;
+    },
+  })
+  .label("URL2");
 
-    return (
-      <input
-        value={value}
-        onChange={(event) => {
-          setActive(true);
-          setValue(event.target.value);
-        }}
-        onBlur={() => {
-          setActive(false);
-          props.onChange(value);
-        }}
-      />
-    );
-  });
-
-const testConfig = eb.config({
-  widgets: {
-    url: urlWidget, // this widget's type will be available to use in a definition (correctly typed)
+const colorWidget = eb.tokenWidget({
+  zodType: z.string(),
+  defaultValue: "#000000",
+  component: (props) => {
+    return <>{props.value}</>;
   },
 });
 
-const { definition, select, string, number, schema, custom, option } =
-  testConfig; // export from config so we have the context of what is set in config (e.g. widgets)
+const productWidget = eb.externalWidget({
+  zodType: z.object({ productId: z.string() }),
+  component: (props) => {
+    return <>{props.id}</>;
+  },
+  type: "shopify",
+  callback: async ({ externalData, externalDataId }) => {
+    return {
+      a: { type: "text", value: { productId: "asb" } },
+      b: { type: "text", value: { productId: "asb" } },
+    };
+  },
+});
 
-const test = definition({
+const widgets = eb.widgets({
+  inline: {
+    url: urlWidget,
+    urlTwo: urlWidgetTwo,
+  },
+  token: {
+    color: colorWidget,
+  },
+  external: {
+    product: productWidget,
+  },
+});
+
+// TOKENS
+const colorTokens = eb
+  .colorTokens({
+    blue: eb.colorToken({ $res: true, xs: "#0000FF", xl: "#0000FF" }),
+    red: eb.colorToken("red"),
+  })
+  .default("blue");
+
+const customToken = eb
+  .customTokens({
+    zodType: z.string(),
+    tokens: {
+      big: eb.customToken("big"),
+      small: eb.customToken("small"),
+    },
+  })
+  .default("big");
+
+const customToken2 = eb
+  .customTokens({
+    zodType: z.number(),
+    tokens: {
+      big: eb.customToken(10),
+      small: eb.customToken(5),
+    },
+  })
+  .default("big");
+
+const tokens = eb.tokens({
+  standard: {
+    color: colorTokens,
+  },
+  custom: {
+    size: customToken,
+    size2: customToken2,
+  },
+});
+
+// Base Config
+// This config sets up tokens and widgets whose types need to be available when setting up easyblocks types
+const { inlineType, externalType, tokenType, baseConfigWithTypes } =
+  eb.baseConfig({
+    devices: devices,
+    widgets,
+    tokens,
+  });
+
+const urlType = inlineType("url").defaultValue({ val: "www.google.com" });
+const colorType = tokenType("color").customValueWidget("color");
+const productType = externalType(["product"]);
+
+// Now we add the types to the base config - we now have everything we need to set up definitions
+// in a type safe way
+const {
+  definition,
+  schema,
+  stringProp,
+  numberProp,
+  inlineCustom,
+  tokenCustom,
+  externalCustom,
+  group,
+} = baseConfigWithTypes({
+  inlineTypes: {
+    url: urlType,
+  },
+  tokenTypes: {
+    color: colorType,
+  },
+  externalTypes: {
+    product: productType,
+  },
+});
+
+export const s = schema({
+  size: group({
+    height: numberProp().defaultValue(10),
+    width: numberProp().defaultValue(10),
+  }),
+  title: stringProp().defaultValue("Banner"),
+  url: inlineCustom("url"),
+  color: tokenCustom("color"),
+  product: externalCustom("product"),
+});
+
+const banner = definition({
   schema: schema({
-    name: string(),
-    height: number().min(5).max(10),
-    select: select(["a", "b"]),
-    selectTwo: select({
-      a: option().label("A").hideLabel(),
-      b: option().label("B"),
+    size: group({
+      height: numberProp().defaultValue(10),
+      width: numberProp().defaultValue(10),
     }),
-    url: custom("url"), // this is typed - url is based on the widgets defined in the config
+    title: stringProp().defaultValue("Banner"),
+    url: inlineCustom("url"),
+    color: tokenCustom("color"),
+    product: externalCustom("product"),
   }),
   styles: ({ values }) => {
-    const { name, height, select, url, selectTwo } = values; // these are all typed correctly (including unions for select)
+    const { height, width, title, url, color, product } = values;
 
     return {};
   },
 });
-
-testConfig.definitions({
-  test: test,
-});
-
-const noCodeComponentDefenition = testConfig.build().test.schemaDef();

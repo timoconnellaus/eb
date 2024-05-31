@@ -2,7 +2,8 @@
   "name": "easyblocks-typed",
   "version": "1.0.0",
   "scripts": {
-    "publish": "cd packages/eb && bun run publish"
+    "publish": "cd packages/eb && bun run publish",
+    "publish:dryrun": "cd packages/eb && bun run publish:dryrun"
   },
   "workspaces": [
     "packages/*"
