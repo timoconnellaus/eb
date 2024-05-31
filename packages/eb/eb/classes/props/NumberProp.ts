@@ -6,6 +6,7 @@ import { BaseProp } from "./BaseProp";
 export class NumberProp extends BaseProp<number> {
   private _min?: number;
   private _max?: number;
+  private _defaultValue?: number;
 
   max(value: number): this {
     this._max = value;
@@ -17,10 +18,15 @@ export class NumberProp extends BaseProp<number> {
     return this;
   }
 
+  defaultValue(value: number): this {
+    this._defaultValue = value;
+    return this;
+  }
+
   _def(): Omit<NumberSchemaProp, "prop"> {
     return {
       type: "number",
-      defaultValue: this._defaultValue,
+      // defaultValue: this._defaultValue,
     };
   }
 }

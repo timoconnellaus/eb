@@ -1,4 +1,4 @@
-import { baseConfig } from "./baseConfig";
+import { baseConfig } from "./config";
 import { device, devices } from "./devices";
 import {
   colorToken,

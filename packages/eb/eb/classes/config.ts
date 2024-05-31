@@ -4,102 +4,34 @@ import type { TokenWidget } from "./widgets/token-widget";
 import type { Widgets } from "./widgets/widgets";
 import type { StandardTokenTypes, Tokens, TokenSet } from "./tokens";
 import type { Devices } from "./devices";
-import { InlineType, TokenType, ExternalType } from "./types";
-import type { DefinitionInputType, DefinitionOutputType } from "./definition";
-import type { LocalSchemaProp, SchemaProp } from "@easyblocks/core";
+import { InlineType, TokenType, ExternalType } from "./easyblocks-types";
+import { Definition, type DefinitionInputType } from "./definition";
 import { BaseProp } from "./props/BaseProp";
-import type { z, ZodType } from "zod";
 import { StringProp } from "./props/StringProp";
 import { NumberProp } from "./props/NumberProp";
 import { CustomProp } from "./props/CustomProp";
-
-type ExtractInnerTypeFromInlineWidget<T> = T extends InlineWidget<infer U>
-  ? U
-  : never;
-
-type ExtractInnerTypeFromTokenWidget<T> = T extends TokenWidget<infer U>
-  ? U
-  : never;
-
-type ExtractInnerTypeFromExternalWidget<T> = T extends ExternalWidget<infer U>
-  ? U
-  : never;
-
-// flatten the schema keys - base props are referenced as is, groups are referenced
-// with a dot notation so we can access nested properties
-// in the next step and remove the group wrapper
-type SchemaToPaths<
-  T extends Record<string, Group<any> | BaseProp<any>>,
-  Key = keyof T
-> = Key extends string
-  ? T[Key] extends BaseProp<any>
-    ? `${Key}`
-    : T[Key] extends Group<any>
-    ? `${Key}.${SchemaToPaths<T[Key]["_props"]>}`
-    : never
-  : never;
-
-// Recursively get the types of each nested property of a schema
-// This is used to get the inner type e.g. BaseType<string> becomes string
-// eg. Group<{ a: BaseType<string> }> becomes { a: string }
-type ExtrapolateTypes<T> = T extends BaseProp<infer U>
-  ? U
-  : T extends Group<infer G>
-  ? ExtrapolateTypes<G>
-  : T extends Record<
-      string,
-      BaseProp<any> | Group<Record<string, BaseProp<any>>>
-    >
-  ? { [K in keyof T]: ExtrapolateTypes<T[K]> }
-  : never;
-
-// Split a string by a delimiter - use to break the path into individual keys
-type Split<
-  S extends string,
-  D extends string
-> = S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] : [S];
-
-// Get the type of a nested property of an object by providing a path
-type GetType<O, P extends any[]> = P extends [infer Head, ...infer Tail]
-  ? Head extends keyof O
-    ? Tail extends []
-      ? O[Head]
-      : GetType<O[Head], Tail>
-    : never
-  : never;
-
-// Get the type from the base of the object. This is a starting point for the path
-// We recurse over the rest of the object from here
-type PathToType<P extends string, O> = GetType<O, Split<P, ".">>;
-
-// Rename the keys of an object by removing the group wrapper
-// We only use the dot notation on groups - so we can remove the group wrapper
-// when we see a dot in the key
-// This is achieved by looping over the paths in the format paths = "key1" | "key2" | "someGroup.key3"
-type RenameKeys<T> = {
-  [K in keyof T as K extends `${infer GroupKey}.${infer ObjectKey}`
-    ? ObjectKey
-    : K]: T[K];
-};
-
-// Map the paths to the types of the schema
-type MappedPaths<Object, Paths extends string> = {
-  [P in Paths]: PathToType<P, Object>;
-};
-
-type FlattenSchema<T extends Record<string, Group<any> | BaseProp<any>>> =
-  RenameKeys<MappedPaths<ExtrapolateTypes<T>, SchemaToPaths<T>>>;
+import { Group } from "./props/group";
+import type {
+  ExtractInnerTypeFromExternalWidget,
+  ExtractInnerTypeFromInlineWidget,
+  ExtractInnerTypeFromTokenWidget,
+  FlattenSchema,
+} from "./types";
+import { ComponentCollectionProp } from "./props/ComponentCollection";
 
 interface BaseConfigProps<
   InlineWidgets extends Record<string, InlineWidget<any>>,
   TokenWidgets extends Record<string, TokenWidget<any>>,
   ExternalWidgets extends Record<string, ExternalWidget<any>>,
   CustomTokens extends Record<string, TokenSet<any, any, any>>,
-  StandardTokens extends Partial<StandardTokenTypes>
+  StandardTokens extends Partial<StandardTokenTypes>,
+  ComponentNameType extends string,
+  ComponentTypes extends ComponentNameType[]
 > {
   widgets?: Widgets<InlineWidgets, TokenWidgets, ExternalWidgets>;
   tokens?: Tokens<CustomTokens, StandardTokens>;
   devices?: Devices;
+  componentTypes: ComponentTypes;
 }
 
 class BaseConfig<
@@ -107,11 +39,14 @@ class BaseConfig<
   TokenWidgets extends Record<string, TokenWidget<any>>,
   ExternalWidgets extends Record<string, ExternalWidget<any>>,
   CustomTokens extends Record<string, TokenSet<any, any, any>>,
-  StandardTokens extends Partial<StandardTokenTypes>
+  StandardTokens extends Partial<StandardTokenTypes>,
+  ComponentNameType extends string,
+  ComponentTypes extends ComponentNameType[]
 > {
   private _widgets?: Widgets<InlineWidgets, TokenWidgets, ExternalWidgets>;
   private _tokens?: Tokens<CustomTokens, StandardTokens>;
   private _devices: Devices;
+  private _componentTypes: ComponentTypes;
 
   constructor(
     props: BaseConfigProps<
@@ -119,7 +54,9 @@ class BaseConfig<
       TokenWidgets,
       ExternalWidgets,
       CustomTokens,
-      StandardTokens
+      StandardTokens,
+      ComponentNameType,
+      ComponentTypes
     >
   ) {
     this._widgets =
@@ -127,6 +64,7 @@ class BaseConfig<
       ({} as Widgets<InlineWidgets, TokenWidgets, ExternalWidgets>);
     this._tokens = props.tokens ?? ({} as Tokens<CustomTokens, StandardTokens>);
     this._devices = props.devices ?? ({} as Devices);
+    this._componentTypes = props.componentTypes;
   }
 
   inlineType<K extends keyof InlineWidgets>(inlineWidgetKey: K) {
@@ -157,6 +95,7 @@ class BaseConfig<
     inlineTypes?: InlineTypes;
     tokenTypes?: TokenTypes;
     externalTypes?: ExternalTypes;
+    componentTypes?: ComponentTypes;
   }) {
     return new BaseConfigWithTypes<
       InlineWidgets,
@@ -166,12 +105,15 @@ class BaseConfig<
       StandardTokens,
       InlineTypes,
       TokenTypes,
-      ExternalTypes
+      ExternalTypes,
+      ComponentNameType,
+      ComponentTypes
     >({
       baseConfig: {
         widgets: this._widgets,
         tokens: this._tokens,
         devices: this._devices,
+        componentTypes: this._componentTypes,
       },
       inlineTypes: props.inlineTypes ?? ({} as InlineTypes),
       tokenTypes: props.tokenTypes ?? ({} as TokenTypes),
@@ -193,14 +135,18 @@ export const baseConfig = <
   TokenWidgets extends Record<string, TokenWidget<any>>,
   ExternalWidgets extends Record<string, ExternalWidget<any>>,
   CustomTokens extends Record<string, TokenSet<any, any, any>>,
-  StandardTokens extends Partial<StandardTokenTypes>
+  StandardTokens extends Partial<StandardTokenTypes>,
+  ComponentType extends string,
+  ComponentTypes extends ComponentType[]
 >(
   props: BaseConfigProps<
     InlineWidgets,
     TokenWidgets,
     ExternalWidgets,
     CustomTokens,
-    StandardTokens
+    StandardTokens,
+    ComponentType,
+    ComponentTypes
   >
 ) =>
   new BaseConfig<
@@ -208,10 +154,12 @@ export const baseConfig = <
     TokenWidgets,
     ExternalWidgets,
     CustomTokens,
-    StandardTokens
+    StandardTokens,
+    ComponentType,
+    ComponentTypes
   >(props);
 
-class BaseConfigWithTypes<
+export class BaseConfigWithTypes<
   InlineWidgets extends Record<string, InlineWidget<any>>,
   TokenWidgets extends Record<string, TokenWidget<any>>,
   ExternalWidgets extends Record<string, ExternalWidget<any>>,
@@ -222,14 +170,18 @@ class BaseConfigWithTypes<
     string,
     TokenType<TokenWidgets, any, CustomTokens, StandardTokens>
   >,
-  ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>
+  ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>,
+  ComponentType extends string,
+  ComponentTypes extends ComponentType[]
 > {
   private _baseConfig: BaseConfig<
     InlineWidgets,
     TokenWidgets,
     ExternalWidgets,
     CustomTokens,
-    StandardTokens
+    StandardTokens,
+    ComponentType,
+    ComponentTypes
   >;
   private _inlineTypes: InlineTypes;
   private _tokenTypes: TokenTypes;
@@ -244,44 +196,81 @@ class BaseConfigWithTypes<
     };
   }
 
-  definition<U>(input: DefinitionInputType<U>): DefinitionOutputType<U> {
-    return {
-      schema: input.schema,
-      styles: (values: U) => input.styles({ values }),
-      // schemaDef: (): SchemaProp[] => {
-      //   const result: SchemaProp[] = [];
-      //   Object.keys(input.schema.structure).forEach((key) => {
-      //     const prop = input.schema.structure[key];
-      //     const schema = prop.getSchema();
-      //     result.push({
-      //       prop: key,
-      //       ...schema,
-      //     });
-      //   });
-      //   return result;
-      // },
-    };
+  definition<U>(
+    input: DefinitionInputType<U, ComponentType, ComponentTypes>
+  ): Definition<
+    U,
+    InlineWidgets,
+    TokenWidgets,
+    ExternalWidgets,
+    CustomTokens,
+    StandardTokens,
+    InlineTypes,
+    TokenTypes,
+    ExternalTypes,
+    ComponentType,
+    ComponentTypes
+  > {
+    return new Definition<
+      U,
+      InlineWidgets,
+      TokenWidgets,
+      ExternalWidgets,
+      CustomTokens,
+      StandardTokens,
+      InlineTypes,
+      TokenTypes,
+      ExternalTypes,
+      ComponentType,
+      ComponentTypes
+    >(input);
   }
+
+  // definition<U>(
+  //   input: DefinitionInputType<U, ComponentType, ComponentTypes>
+  // ): DefinitionOutputType<U, ComponentType, ComponentTypes> {
+  //   return {
+  //     schema: input.schema,
+  //     styles: (values: U) => input.styles({ values }),
+  //     type: input.type,
+
+  //     // schemaDef: (): SchemaProp[] => {
+  //     //   const result: SchemaProp[] = [];
+  //     //   Object.keys(input.schema.structure).forEach((key) => {
+  //     //     const prop = input.schema.structure[key];
+  //     //     const schema = prop.getSchema();
+  //     //     result.push({
+  //     //       prop: key,
+  //     //       ...schema,
+  //     //     });
+  //     //   });
+  //     //   return result;
+  //     // },
+  //   };
+  // }
 
   schema<
     T extends Record<
       string,
       BaseProp<any> | Group<Record<string, BaseProp<any>>>
     >
-  >(
-    schema: T
-  ): {
-    structure: FlattenSchema<T>;
-  } {
+  >(schema: T): FlattenSchema<T> {
     const schemaStructure: any = {};
     Object.keys(schema).forEach((key) => {
       const prop = schema[key as keyof T];
-      schemaStructure[key as keyof T] =
-        prop instanceof Group ? prop._props : prop;
+      if (prop instanceof Group) {
+        const groupProps = prop._props;
+        Object.keys(groupProps).forEach((key) => {
+          const gProp = groupProps[key as keyof T as string];
+          schemaStructure[key as keyof T as string] = gProp;
+        });
+      } else if (prop instanceof ComponentCollectionProp) {
+        // skip they aren't available in values
+      } else {
+        schemaStructure[key as keyof T as string] = prop;
+      }
     });
-    return {
-      structure: schemaStructure,
-    };
+    return schemaStructure;
   }
 
   stringProp() {
@@ -290,6 +279,65 @@ class BaseConfigWithTypes<
 
   numberProp() {
     return new NumberProp();
+  }
+
+  // componentCollectionProp<
+  //   T,
+  //   InlineWidgets,
+  //   TokenWidgets,
+  //   ExternalWidgets,
+  //   CustomTokens,
+  //   StandardTokens,
+  //   InlineTypes,
+  //   TokenTypes,
+  //   ExternalTypes,
+  //   ComponentType,
+  //   ComponentTypes,
+  //   Definition
+  // >(components: Definition[]) {
+  //   return new ComponentCollectionProp<Definition[]>(components);
+  // }
+
+  componentCollectionProp<U>(
+    input: Definition<
+      U,
+      InlineWidgets,
+      TokenWidgets,
+      ExternalWidgets,
+      CustomTokens,
+      StandardTokens,
+      InlineTypes,
+      TokenTypes,
+      ExternalTypes,
+      ComponentType,
+      ComponentTypes
+    >[]
+  ): ComponentCollectionProp<
+    U,
+    InlineWidgets,
+    TokenWidgets,
+    ExternalWidgets,
+    CustomTokens,
+    StandardTokens,
+    InlineTypes,
+    TokenTypes,
+    ExternalTypes,
+    ComponentType,
+    ComponentTypes
+  > {
+    return new ComponentCollectionProp<
+      U,
+      InlineWidgets,
+      TokenWidgets,
+      ExternalWidgets,
+      CustomTokens,
+      StandardTokens,
+      InlineTypes,
+      TokenTypes,
+      ExternalTypes,
+      ComponentType,
+      ComponentTypes
+    >(input);
   }
 
   group<T extends Record<string, BaseProp<any>>>(props: T): Group<T> {
@@ -326,7 +374,9 @@ class BaseConfigWithTypes<
       TokenWidgets,
       ExternalWidgets,
       CustomTokens,
-      StandardTokens
+      StandardTokens,
+      ComponentType,
+      ComponentTypes
     >;
     inlineTypes?: InlineTypes;
     tokenTypes?: TokenTypes;
@@ -336,19 +386,5 @@ class BaseConfigWithTypes<
     this._inlineTypes = props.inlineTypes ?? ({} as InlineTypes);
     this._tokenTypes = props.tokenTypes ?? ({} as TokenTypes);
     this._externalTypes = props.externalTypes ?? ({} as ExternalTypes);
-  }
-}
-
-export class Group<T extends Record<string, BaseProp<any>>> {
-  _props: T;
-
-  constructor(props: T) {
-    this._props = props;
-  }
-
-  _def() {
-    return {
-      props: this._props,
-    };
   }
 }

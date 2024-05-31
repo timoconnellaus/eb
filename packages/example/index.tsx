@@ -5,7 +5,8 @@ import { eb } from "eb";
 const devices = eb
   // initially set to default devices
   .devices({
-    sm: eb.device().hidden(true), // change properties
+    sm: eb.device().hidden(false), // change properties
+    lg: eb.device(),
   })
   .mainDevice("md"); // we can set the main device
 
@@ -19,6 +20,14 @@ const urlWidget = eb
     },
   })
   .label("URL");
+
+const mikesWidget = eb.inlineWidget({
+  zodType: z.object({ name: z.string() }),
+  defaultValue: { name: "Mike" },
+  component: (props) => {
+    return <>{props.value.name}</>;
+  },
+});
 
 const urlWidgetTwo = eb
   .inlineWidget({
@@ -39,7 +48,7 @@ const colorWidget = eb.tokenWidget({
 });
 
 const productWidget = eb.externalWidget({
-  zodType: z.object({ productId: z.string() }),
+  zodType: z.object({ productId: z.string(), url: z.string() }),
   component: (props) => {
     return <>{props.id}</>;
   },
@@ -55,7 +64,8 @@ const productWidget = eb.externalWidget({
 const widgets = eb.widgets({
   inline: {
     url: urlWidget,
-    urlTwo: urlWidgetTwo,
+    urlThree: urlWidgetTwo,
+    mikeType: mikesWidget,
   },
   token: {
     color: colorWidget,
@@ -70,8 +80,9 @@ const colorTokens = eb
   .colorTokens({
     blue: eb.colorToken({ $res: true, xs: "#0000FF", xl: "#0000FF" }),
     red: eb.colorToken("red"),
+    orange: eb.colorToken("#FFA500"),
   })
-  .default("blue");
+  .default("red");
 
 const customToken = eb
   .customTokens({
@@ -110,8 +121,10 @@ const { inlineType, externalType, tokenType, baseConfigWithTypes } =
     devices: devices,
     widgets,
     tokens,
+    componentTypes: ["section", "button"],
   });
 
+const mikeType = inlineType("mikeType").defaultValue({ name: "mime" });
 const urlType = inlineType("url").defaultValue({ val: "www.google.com" });
 const colorType = tokenType("color").customValueWidget("color");
 const productType = externalType(["product"]);
@@ -126,6 +139,7 @@ const {
   inlineCustom,
   tokenCustom,
   externalCustom,
+  componentCollectionProp,
   group,
 } = baseConfigWithTypes({
   inlineTypes: {
@@ -139,19 +153,37 @@ const {
   },
 });
 
-export const s = schema({
-  size: group({
-    height: numberProp().defaultValue(10),
-    width: numberProp().defaultValue(10),
+const button = definition({
+  id: "button",
+  type: "button",
+  schema: schema({
+    label: stringProp().defaultValue("Button"),
   }),
-  title: stringProp().defaultValue("Banner"),
-  url: inlineCustom("url"),
-  color: tokenCustom("color"),
-  product: externalCustom("product"),
+}).styles(({ values }) => {
+  const { label } = values;
+
+  return {};
+});
+
+const buttonTwo = definition({
+  id: "button",
+  type: "button",
+  schema: schema({
+    label: stringProp().defaultValue("Button"),
+    size: group({
+      height: numberProp().defaultValue(10),
+      width: numberProp().defaultValue(10),
+    }),
+  }),
 });
 
 const banner = definition({
+  id: "banner",
+  type: "section",
+  pasteSlots: ["Section"],
+  label: "Banner",
   schema: schema({
+    buttons: componentCollectionProp([button]),
     size: group({
       height: numberProp().defaultValue(10),
       width: numberProp().defaultValue(10),
@@ -161,9 +193,8 @@ const banner = definition({
     color: tokenCustom("color"),
     product: externalCustom("product"),
   }),
-  styles: ({ values }) => {
-    const { height, width, title, url, color, product } = values;
+}).styles(({ values }) => {
+  const { height, width, title, url, color, product } = values;
 
-    return {};
-  },
+  return {};
 });

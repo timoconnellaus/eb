@@ -1,1 +1,1 @@
-export { eb } from "./classes/eb";
+export { eb } from "./eb";
