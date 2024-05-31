@@ -21,14 +21,6 @@ const urlWidget = eb
   })
   .label("URL");
 
-const mikesWidget = eb.inlineWidget({
-  zodType: z.object({ name: z.string() }),
-  defaultValue: { name: "Mike" },
-  component: (props) => {
-    return <>{props.value.name}</>;
-  },
-});
-
 const urlWidgetTwo = eb
   .inlineWidget({
     zodType: z.object({ two: z.string() }),
@@ -65,7 +57,6 @@ const widgets = eb.widgets({
   inline: {
     url: urlWidget,
     urlThree: urlWidgetTwo,
-    mikeType: mikesWidget,
   },
   token: {
     color: colorWidget,
@@ -124,7 +115,6 @@ const { inlineType, externalType, tokenType, baseConfigWithTypes } =
     componentTypes: ["section", "button"],
   });
 
-const mikeType = inlineType("mikeType").defaultValue({ name: "mime" });
 const urlType = inlineType("url").defaultValue({ val: "www.google.com" });
 const colorType = tokenType("color").customValueWidget("color");
 const productType = externalType(["product"]);
@@ -153,13 +143,15 @@ const {
   },
 });
 
-const button = definition({
+export const button = definition({
   id: "button",
-  type: "button",
+  // type: "button",
   schema: schema({
     label: stringProp().defaultValue("Button"),
   }),
-}).styles(({ values }) => {
+});
+
+const buttonComponent = button.styles(({ values }) => {
   const { label } = values;
 
   return {};
@@ -167,7 +159,7 @@ const button = definition({
 
 const buttonTwo = definition({
   id: "button",
-  type: "button",
+  // type: "button",
   schema: schema({
     label: stringProp().defaultValue("Button"),
     size: group({
@@ -177,9 +169,39 @@ const buttonTwo = definition({
   }),
 });
 
+const test = schema({
+  label: stringProp().defaultValue("Button"),
+  size: group({
+    height: numberProp().defaultValue(10),
+    width: numberProp().defaultValue(10),
+  }),
+});
+
+export const testSchema = {
+  // buttons: componentCollectionProp([button]),
+  size: group({
+    height: numberProp().defaultValue(10),
+    width: numberProp().defaultValue(10),
+  }),
+  title: stringProp().defaultValue("Banner"),
+  url: inlineCustom("url"),
+  color: tokenCustom("color"),
+  product: externalCustom("product"),
+};
+
+export {
+  group,
+  numberProp,
+  stringProp,
+  inlineCustom,
+  tokenCustom,
+  externalCustom,
+  componentCollectionProp,
+};
+
 const banner = definition({
   id: "banner",
-  type: "section",
+  // type: "section",
   pasteSlots: ["Section"],
   label: "Banner",
   schema: schema({
@@ -193,7 +215,9 @@ const banner = definition({
     color: tokenCustom("color"),
     product: externalCustom("product"),
   }),
-}).styles(({ values }) => {
+});
+
+const bannerComponent = banner.styles(({ values }) => {
   const { height, width, title, url, color, product } = values;
 
   return {};

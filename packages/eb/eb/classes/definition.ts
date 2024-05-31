@@ -82,7 +82,19 @@ export class Definition<
 > {
   private _id: string;
   private _schema: T;
-  private _styles?: StyleFunction<T>;
+  private _noCodeComponent?: ComponentStyles<
+    T,
+    InlineWidgets,
+    TokenWidgets,
+    ExternalWidgets,
+    CustomTokens,
+    StandardTokens,
+    InlineTypes,
+    TokenTypes,
+    ExternalTypes,
+    ComponentType,
+    ComponentTypes
+  >;
   private _type?: ComponentTypes[number] | Array<ComponentTypes[number]>;
   private _label?: string;
   private _pasteSlots?: Array<string>;
@@ -96,9 +108,37 @@ export class Definition<
   }
 
   styles(styles: StyleFunction<T>) {
-    this._styles = styles;
-    return this;
+    return new ComponentStyles<
+      T,
+      InlineWidgets,
+      TokenWidgets,
+      ExternalWidgets,
+      CustomTokens,
+      StandardTokens,
+      InlineTypes,
+      TokenTypes,
+      ExternalTypes,
+      ComponentType,
+      ComponentTypes
+    >(styles);
   }
+
+  // styles(styles: StyleFunction<T>) {
+  //   this._styles = new DefinitionStyles<
+  //     T,
+  //     InlineWidgets,
+  //     TokenWidgets,
+  //     ExternalWidgets,
+  //     CustomTokens,
+  //     StandardTokens,
+  //     InlineTypes,
+  //     TokenTypes,
+  //     ExternalTypes,
+  //     ComponentType,
+  //     ComponentTypes
+  //   >(styles);
+  //   return this;
+  // }
 
   _def(): DefinitionOutputType<T, ComponentType, ComponentTypes> {
     return {
@@ -106,5 +146,28 @@ export class Definition<
       type: this._type,
       id: this._id,
     };
+  }
+}
+
+class ComponentStyles<
+  T,
+  InlineWidgets extends Record<string, InlineWidget<any>>,
+  TokenWidgets extends Record<string, TokenWidget<any>>,
+  ExternalWidgets extends Record<string, ExternalWidget<any>>,
+  CustomTokens extends Record<string, TokenSet<any, any, any>>,
+  StandardTokens extends Partial<StandardTokenTypes>,
+  InlineTypes extends Record<string, InlineType<InlineWidgets, any>>,
+  TokenTypes extends Record<
+    string,
+    TokenType<TokenWidgets, any, CustomTokens, StandardTokens>
+  >,
+  ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>,
+  ComponentType extends string,
+  ComponentTypes extends ComponentType[]
+> {
+  private _styles?: StyleFunction<T>;
+
+  constructor(styles: StyleFunction<T>) {
+    this._styles = styles;
   }
 }

@@ -5,7 +5,7 @@ import type {
 import type { ZodType } from "zod";
 import { z } from "zod";
 import { BaseProp } from "./BaseProp";
-import { Definition } from "../definition";
+import type { Definition } from "../definition";
 import type { InlineType, TokenType, ExternalType } from "../easyblocks-types";
 import type { TokenSet, StandardTokenTypes } from "../tokens";
 import type { ExternalWidget } from "../widgets/external-widget";
@@ -26,9 +26,8 @@ export class ComponentCollectionProp<
   >,
   ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>,
   ComponentType extends string,
-  ComponentTypes extends ComponentType[]
-> extends BaseProp<string> {
-  private _components: Definition<
+  ComponentTypes extends ComponentType[],
+  Definitions extends Definition<
     T,
     InlineWidgets,
     TokenWidgets,
@@ -40,23 +39,23 @@ export class ComponentCollectionProp<
     ExternalTypes,
     ComponentType,
     ComponentTypes
-  >[];
+  >[] = Definition<
+    T,
+    InlineWidgets,
+    TokenWidgets,
+    ExternalWidgets,
+    CustomTokens,
+    StandardTokens,
+    InlineTypes,
+    TokenTypes,
+    ExternalTypes,
+    ComponentType,
+    ComponentTypes
+  >[]
+> extends BaseProp<string> {
+  private _components: Definitions;
 
-  constructor(
-    components: Definition<
-      T,
-      InlineWidgets,
-      TokenWidgets,
-      ExternalWidgets,
-      CustomTokens,
-      StandardTokens,
-      InlineTypes,
-      TokenTypes,
-      ExternalTypes,
-      ComponentType,
-      ComponentTypes
-    >[]
-  ) {
+  constructor(components: Definitions) {
     super();
     this._components = components;
   }
