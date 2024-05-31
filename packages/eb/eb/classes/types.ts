@@ -36,7 +36,22 @@ export type SchemaToPaths<
   Key = keyof T
 > = Key extends string
   ? T[Key] extends BaseProp<any>
-    ? `${Key}`
+    ? // we don't want to include the component collection prop in the final output as it's not a value
+      T[Key] extends ComponentCollectionProp<
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any
+      >
+      ? `SKIP_THIS_PROPERTY`
+      : `${Key}`
     : T[Key] extends Group<any>
     ? `${Key}.${SchemaToPaths<T[Key]["_props"]>}`
     : never
@@ -107,6 +122,11 @@ export type RenameKeys<T> = {
 // type test2 = "a" | "b" | "c"
 // type test3 = AssertSameLength<test, test2>
 
+// exclude any paths that are in the component collection prop
+type ExcludeSkippedProps<T extends string> = T extends "SKIP_THIS_PROPERTY"
+  ? never
+  : T;
+
 // Map the paths to the types of the schema
 export type MappedPaths<Object, Paths extends string> = {
   [P in Paths]: PathToType<P, Object>;
@@ -114,4 +134,6 @@ export type MappedPaths<Object, Paths extends string> = {
 
 export type FlattenSchema<
   T extends Record<string, Group<any> | BaseProp<any>>
-> = RenameKeys<MappedPaths<ExtrapolateTypes<T>, SchemaToPaths<T>>>;
+> = RenameKeys<
+  MappedPaths<ExtrapolateTypes<T>, ExcludeSkippedProps<SchemaToPaths<T>>>
+>;
