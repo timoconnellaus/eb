@@ -21,16 +21,6 @@ const urlWidget = eb
   })
   .label("URL");
 
-const urlWidgetTwo = eb
-  .inlineWidget({
-    zodType: z.object({ two: z.string() }),
-    defaultValue: { two: "" },
-    component: (props) => {
-      return <>{props.value.two}</>;
-    },
-  })
-  .label("URL2");
-
 const colorWidget = eb.tokenWidget({
   zodType: z.string(),
   defaultValue: "#000000",
@@ -53,71 +43,55 @@ const productWidget = eb.externalWidget({
   },
 });
 
-const widgets = eb.widgets({
-  inline: {
-    url: urlWidget,
-    urlThree: urlWidgetTwo,
-  },
-  token: {
-    color: colorWidget,
-  },
-  external: {
-    product: productWidget,
-  },
-});
-
-// TOKENS
-const colorTokens = eb
-  .colorTokens({
-    blue: eb.colorToken({ $res: true, xs: "#0000FF", xl: "#0000FF" }),
-    red: eb.colorToken("red"),
-    orange: eb.colorToken("#FFA500"),
-  })
-  .default("red");
-
-const customToken = eb
-  .customTokens({
-    zodType: z.string(),
-    tokens: {
-      big: eb.customToken("big"),
-      small: eb.customToken("small"),
+// This step of config sets up tokens, widgets and deviecs - whose types need to be available when setting up custom types
+const { inlineType, externalType, tokenType, configWithTypes } = eb.config({
+  devices: eb.devices({
+    sm: eb.device().hidden(false), // change properties
+  }),
+  widgets: eb.widgets({
+    inline: {
+      url: urlWidget,
     },
-  })
-  .default("big");
-
-const customToken2 = eb
-  .customTokens({
-    zodType: z.number(),
-    tokens: {
-      big: eb.customToken(10),
-      small: eb.customToken(5),
+    token: {
+      color: colorWidget,
     },
-  })
-  .default("big");
-
-const tokens = eb.tokens({
-  standard: {
-    color: colorTokens,
-  },
-  custom: {
-    size: customToken,
-    size2: customToken2,
-  },
+    external: {
+      product: productWidget,
+    },
+  }),
+  tokens: eb.tokens({
+    standard: {
+      color: eb
+        .colorTokens({
+          blue: eb.colorToken({ $res: true, xs: "#0000FF", xl: "#0000FF" }),
+          red: eb.colorToken("red"),
+          orange: eb.colorToken("#FFA500"),
+        })
+        .default("red"),
+      space: eb.spaceTokens({
+        "1": eb.spaceToken(1).label("1px"),
+        "2": eb.spaceToken(2).label("2px"),
+        "3": eb.spaceToken(3).label("3px"),
+        "10": eb.spaceToken(10).label("10px"),
+        "20": eb.spaceToken(20).label("20px"),
+        "30": eb.spaceToken(30).label("30px"),
+        "40": eb.spaceToken(40).label("40px"),
+      }),
+    },
+    custom: {
+      size: eb
+        .customTokens({
+          zodType: z.string(),
+          tokens: {
+            big: eb.customToken("big"),
+            small: eb.customToken("small"),
+          },
+        })
+        .default("big"),
+    },
+  }),
+  componentTypes: ["section", "button"],
 });
-
-// Base Config
-// This config sets up tokens and widgets whose types need to be available when setting up easyblocks types
-const { inlineType, externalType, tokenType, baseConfigWithTypes } =
-  eb.baseConfig({
-    devices: devices,
-    widgets,
-    tokens,
-    componentTypes: ["section", "button"],
-  });
-
-const urlType = inlineType("url").defaultValue({ val: "www.google.com" });
-const colorType = tokenType("color").customValueWidget("color");
-const productType = externalType(["product"]);
 
 // Now we add the types to the base config - we now have everything we need to set up definitions
 // in a type safe way
@@ -126,68 +100,88 @@ const {
   schema,
   stringProp,
   numberProp,
+  selectProp,
+  componentArray,
   inlineCustom,
   tokenCustom,
   externalCustom,
   componentCollectionProp,
   group,
-} = baseConfigWithTypes({
+  noCodeComponents,
+  component,
+  noCodeComponentProps,
+  componentProp,
+  colorProp,
+} = configWithTypes({
   inlineTypes: {
-    url: urlType,
+    url: inlineType("url").defaultValue({ val: "www.google.com" }),
   },
   tokenTypes: {
-    color: colorType,
+    color: tokenType("color").customValueWidget("color"),
   },
   externalTypes: {
-    product: productType,
+    product: externalType(["product"]),
   },
 });
 
-export const button = definition({
+export const buttonDefinition = definition({
   id: "button",
-  // type: "button",
+  type: "button",
   schema: schema({
-    label: stringProp().defaultValue("Button"),
+    height: numberProp().defaultValue(10),
+    size: tokenCustom("color"),
   }),
+  noCodeComponents: noCodeComponents({
+    Button: component(),
+  }),
+  thisComponentProps: noCodeComponentProps({}),
 });
 
-const buttonComponent = button.styles(({ values }) => {
-  const { label } = values;
+const buttonNCC = buttonDefinition.twNoCodeComponent(({ values }) => {
+  const { height } = values;
 
-  return {};
+  const Button = `bg-red-200 height-[${height}px]`;
+
+  return {
+    Button,
+  };
 });
 
-const buttonTwo = definition({
-  id: "button",
-  // type: "button",
+const buttonComponent = buttonNCC.component((props) => {
+  const { Button } = props;
+  return <Button.type {...Button.props} />;
+});
+
+const sectionDefinition = definition({
+  id: "test",
+  type: "section",
   schema: schema({
-    label: stringProp().defaultValue("Button"),
-    size: group({
-      height: numberProp().defaultValue(10),
-      width: numberProp().defaultValue(10),
-    }),
+    Button: componentProp([buttonDefinition]),
+    bg: colorProp(),
   }),
+  noCodeComponents: noCodeComponents({
+    Section: component(),
+  }),
+  thisComponentProps: noCodeComponentProps({}),
 });
 
-const test = schema({
-  label: stringProp().defaultValue("Button"),
-  size: group({
-    height: numberProp().defaultValue(10),
-    width: numberProp().defaultValue(10),
-  }),
+const sectionNCC = sectionDefinition.twNoCodeComponent(({ values }) => {
+  const { bg } = values;
+  const Section = `container mx-auto h-[100px] bg-[${bg}]`;
+
+  return {
+    Section,
+  };
 });
 
-export const testSchema = {
-  // buttons: componentCollectionProp([button]),
-  size: group({
-    height: numberProp().defaultValue(10),
-    width: numberProp().defaultValue(10),
-  }),
-  title: stringProp().defaultValue("Banner"),
-  url: inlineCustom("url"),
-  color: tokenCustom("color"),
-  product: externalCustom("product"),
-};
+const sectionComponent = sectionNCC.component((props) => {
+  const { Section, Button } = props;
+  return (
+    <Section.type {...Section.props}>
+      <Button.type {...Button.props} />
+    </Section.type>
+  );
+});
 
 export {
   group,
@@ -198,27 +192,3 @@ export {
   externalCustom,
   componentCollectionProp,
 };
-
-const banner = definition({
-  id: "banner",
-  // type: "section",
-  pasteSlots: ["Section"],
-  label: "Banner",
-  schema: schema({
-    buttons: componentCollectionProp([button]),
-    size: group({
-      height: numberProp().defaultValue(10),
-      width: numberProp().defaultValue(10),
-    }),
-    title: stringProp().defaultValue("Banner"),
-    url: inlineCustom("url"),
-    color: tokenCustom("color"),
-    product: externalCustom("product"),
-  }),
-});
-
-const bannerComponent = banner.styles(({ values }) => {
-  const { height, width, title, url, color, product } = values;
-
-  return {};
-});

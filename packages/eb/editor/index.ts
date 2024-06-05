@@ -2,7 +2,7 @@ import { EasyblocksEditor as EasyblocksEditorMain } from "@easyblocks/editor";
 import type { ComponentProps } from "react";
 import type { BaseConfigWithTypes } from "../eb/classes/config";
 import type { Config } from "@easyblocks/core";
-import type { TokenSet, StandardTokenTypes } from "../eb/classes/tokens";
+import type { TokenSetClass, IStandardTokenTypes } from "../eb/classes/tokens";
 import type { ExternalWidget } from "../eb/classes/widgets/external-widget";
 import type { InlineWidget } from "../eb/classes/widgets/inline-widget";
 import type { TokenWidget } from "../eb/classes/widgets/token-widget";
@@ -18,8 +18,8 @@ type Props<
   InlineWidgets extends Record<string, InlineWidget<any>>,
   TokenWidgets extends Record<string, TokenWidget<any>>,
   ExternalWidgets extends Record<string, ExternalWidget<any>>,
-  CustomTokens extends Record<string, TokenSet<any, any, any>>,
-  StandardTokens extends Partial<StandardTokenTypes>,
+  CustomTokens extends Record<string, TokenSetClass<any, any, any>>,
+  StandardTokens extends Partial<IStandardTokenTypes>,
   InlineTypes extends Record<string, InlineType<InlineWidgets, any>>,
   TokenTypes extends Record<
     string,
@@ -43,8 +43,8 @@ function EBEditor<
   InlineWidgets extends Record<string, InlineWidget<any>>,
   TokenWidgets extends Record<string, TokenWidget<any>>,
   ExternalWidgets extends Record<string, ExternalWidget<any>>,
-  CustomTokens extends Record<string, TokenSet<any, any, any>>,
-  StandardTokens extends Partial<StandardTokenTypes>,
+  CustomTokens extends Record<string, TokenSetClass<any, any, any>>,
+  StandardTokens extends Partial<IStandardTokenTypes>,
   InlineTypes extends Record<string, InlineType<InlineWidgets, any>>,
   TokenTypes extends Record<
     string,

@@ -1,72 +1,99 @@
-import {
-  group,
-  numberProp,
-  stringProp,
-  inlineCustom,
-  tokenCustom,
-  externalCustom,
-} from "../test";
-import type { BaseProp } from "./props/BaseProp";
-import type { Group } from "./props/group";
-import type { ExternalWidget } from "./widgets/external-widget";
-import type { InlineWidget } from "./widgets/inline-widget";
-import type { TokenWidget } from "./widgets/token-widget";
+import type { ReactElement } from "react";
+import { GroupClass } from "./config";
+import type {
+  BasePropClass,
+  ComponentCollectionPropClass,
+  ComponentPropClass,
+  ExternalWidgetClass,
+  InlineWidgetClass,
+  TokenWidgetClass,
+} from "./config";
+import type { ZodEnum, z } from "zod";
 
-export type ExtractInnerTypeFromInlineWidget<T> = T extends InlineWidget<
+export type ExtractInnerTypeFromInlineWidget<T> = T extends InlineWidgetClass<
   infer U
 >
   ? U
   : never;
 
-export type ExtractInnerTypeFromTokenWidget<T> = T extends TokenWidget<infer U>
-  ? U
-  : never;
-
-export type ExtractInnerTypeFromExternalWidget<T> = T extends ExternalWidget<
+export type ExtractInnerTypeFromTokenWidget<T> = T extends TokenWidgetClass<
   infer U
 >
   ? U
   : never;
 
-// flatten the schema keys - base props are referenced as is, groups are referenced
+export type ExtractInnerTypeFromExternalWidget<T> =
+  T extends ExternalWidgetClass<infer U> ? U : never;
+
+// flatten the schema keys - base props are referenced as is, GroupClasss are referenced
 // with a dot notation so we can access nested properties
-// in the next step and remove the group wrapper
+// in the next step and remove the GroupClass wrapper
 export type SchemaToPaths<
-  T extends Record<string, Group<any> | BaseProp<any>>,
+  T extends Record<string, GroupClass<any> | BasePropClass<any>>,
   Key = keyof T
 > = Key extends string
-  ? T[Key] extends BaseProp<any>
+  ? T[Key] extends BasePropClass<any>
     ? // we don't want to include the component collection prop in the final output as it's not a value
-      T[Key] extends ComponentCollectionProp<
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any
-      >
+      T[Key] extends
+        | ComponentCollectionPropClass<
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any
+          >
+        | ComponentPropClass<
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any,
+            any
+          >
       ? `SKIP_THIS_PROPERTY`
       : `${Key}`
-    : T[Key] extends Group<any>
+    : T[Key] extends GroupClass<any>
     ? `${Key}.${SchemaToPaths<T[Key]["_props"]>}`
     : never
   : never;
 
 // Recursively get the types of each nested property of a schema
 // This is used to get the inner type e.g. BaseType<string> becomes string
-// eg. Group<{ a: BaseType<string> }> becomes { a: string }
-export type ExtrapolateTypes<T> = T extends BaseProp<infer U>
-  ? U
-  : T extends Group<infer G>
+// eg. GroupClass<{ a: BaseType<string> }> becomes { a: string }
+export type ExtrapolateTypes<T> = T extends BasePropClass<infer U>
+  ? U extends ZodEnum<any>
+    ? z.infer<U>
+    : U
+  : T extends GroupClass<infer G>
   ? ExtrapolateTypes<G>
   : T extends Record<
       string,
-      BaseProp<any> | Group<Record<string, BaseProp<any>>>
+      BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
     >
   ? { [K in keyof T]: ExtrapolateTypes<T[K]> }
   : never;
@@ -90,14 +117,118 @@ export type GetType<O, P extends any[]> = P extends [infer Head, ...infer Tail]
 // We recurse over the rest of the object from here
 export type PathToType<P extends string, O> = GetType<O, Split<P, ".">>;
 
-// Rename the keys of an object by removing the group wrapper
-// We only use the dot notation on groups - so we can remove the group wrapper
+// Rename the keys of an object by removing the GroupClass wrapper
+// We only use the dot notation on GroupClasss - so we can remove the GroupClass wrapper
 // when we see a dot in the key
-// This is achieved by looping over the paths in the format paths = "key1" | "key2" | "someGroup.key3"
+// This is achieved by looping over the paths in the format paths = "key1" | "key2" | "someGroupClass.key3"
 export type RenameKeys<T> = {
-  [K in keyof T as K extends `${infer GroupKey}.${infer ObjectKey}`
+  [K in keyof T as K extends `${infer GroupClassKey}.${infer ObjectKey}`
     ? ObjectKey
     : K]: T[K];
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// TYPES FOR DEALING WITH COMPONENT TYPE PROPS CASTING TO REACT ELEMENTS ///////
+////////////////////////////////////////////////////////////////////////////////
+
+export type ExtrapolateComponentTypes<T> = T extends BasePropClass<infer U>
+  ? T extends ComponentCollectionPropClass<
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any
+    >
+    ? ReactElement[]
+    : T extends ComponentPropClass<
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any
+      >
+    ? ReactElement
+    : "IGNORE"
+  : T extends GroupClass<infer G>
+  ? ExtrapolateComponentTypes<G>
+  : T extends Record<
+      string,
+      BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+    >
+  ? { [K in keyof T]: ExtrapolateComponentTypes<T[K]> }
+  : "IGNORE";
+
+type Ignore<T> = T extends "IGNORE" ? never : T;
+
+type FilterIgnore<T> = {
+  [P in keyof T as Ignore<T[P]> extends never ? never : P]: T[P];
+};
+
+export type CastToReactElement<T> = T extends ReactElement | ReactElement[]
+  ? T
+  : T extends string
+  ? never
+  : T;
+
+export type SchemaToPathsReactElements<
+  T extends Record<string, GroupClass<any> | BasePropClass<any>>,
+  Key = keyof T
+> = Key extends string
+  ? T[Key] extends BasePropClass<any>
+    ? `${Key}`
+    : T[Key] extends GroupClass<any>
+    ? `${Key}.${SchemaToPathsReactElements<T[Key]["_props"]>}`
+    : never
+  : never;
+
+export type FlattenSchemaAndCastToReactElement<
+  T extends Record<string, GroupClass<any> | BasePropClass<any>>
+> = FilterIgnore<
+  CastToReactElement<
+    RenameKeys<
+      MappedPaths<
+        ExtrapolateComponentTypes<T>,
+        ExcludeSkippedProps<SchemaToPathsReactElements<T>>
+      >
+    >
+  >
+>;
+
+type StringToElement<T> = T extends string
+  ? ReactElement
+  : T extends string[]
+  ? ReactElement[]
+  : never;
+
+export type ConvertToReactElement<T> = {
+  [K in keyof T]: StringToElement<T[K]>;
 };
 
 // TODO: Assert the length of the union is the same as the length of the paths - to ensure no dulicates used
@@ -123,9 +254,8 @@ export type RenameKeys<T> = {
 // type test3 = AssertSameLength<test, test2>
 
 // exclude any paths that are in the component collection prop
-type ExcludeSkippedProps<T extends string> = T extends "SKIP_THIS_PROPERTY"
-  ? never
-  : T;
+export type ExcludeSkippedProps<T extends string> =
+  T extends "SKIP_THIS_PROPERTY" ? never : T;
 
 // Map the paths to the types of the schema
 export type MappedPaths<Object, Paths extends string> = {
@@ -133,7 +263,7 @@ export type MappedPaths<Object, Paths extends string> = {
 };
 
 export type FlattenSchema<
-  T extends Record<string, Group<any> | BaseProp<any>>
+  T extends Record<string, GroupClass<any> | BasePropClass<any>>
 > = RenameKeys<
   MappedPaths<ExtrapolateTypes<T>, ExcludeSkippedProps<SchemaToPaths<T>>>
 >;

@@ -1,6 +1,7 @@
-import { baseConfig } from "./config";
-import { device, devices } from "./devices";
 import {
+  config,
+  device,
+  devices,
   colorToken,
   colorTokens,
   fontToken,
@@ -16,11 +17,11 @@ import {
   customToken,
   customTokens,
   tokens,
-} from "./tokens";
-import { externalWidget } from "./widgets/external-widget";
-import { inlineWidget } from "./widgets/inline-widget";
-import { tokenWidget } from "./widgets/token-widget";
-import { widgets } from "./widgets/widgets";
+  inlineWidget,
+  externalWidget,
+  tokenWidget,
+  widgets,
+} from "./config";
 
 // Example of how you might export and use these classes
 export const eb = {
@@ -51,5 +52,5 @@ export const eb = {
   customTokens,
 
   // base config to be used in the app
-  baseConfig,
+  config,
 };
