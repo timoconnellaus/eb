@@ -2110,18 +2110,8 @@ class DefinitionNoCodeTwFunction<
     this._twFunction = props.twFunction;
   }
 
-  component(
-    component: ComponentFunction
-  ): DefinitionReactComponent<
-    T,
-    Schema,
-    O,
-    P,
-    Params,
-    TWFunctionReturnType,
-    ComponentFunction
-  > {
-    return new DefinitionReactComponent<
+  component(component: ComponentFunction): ComponentFunction {
+    const newComponent = new DefinitionReactComponent<
       T,
       Schema,
       O,
@@ -2132,6 +2122,7 @@ class DefinitionNoCodeTwFunction<
     >({
       component,
     });
+    return newComponent.component();
   }
 }
 
@@ -2184,5 +2175,9 @@ class DefinitionReactComponent<
     >
   ) {
     this._component = props.component;
+  }
+
+  component() {
+    return this._component;
   }
 }
