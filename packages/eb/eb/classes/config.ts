@@ -1020,8 +1020,15 @@ export class ComponentCollectionPropClass<
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
   Params extends Record<string, any>,
-  TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
-  TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
+  TWFunction extends (props: {
+    values: Schema["flattenedSchema"];
+    params: Params;
+  }) => {
+    tw: O;
+  },
+  TWFunctionReturnType extends ConvertToReactElement<
+    ReturnType<TWFunction>["tw"]
+  >,
   ComponentFunction extends (
     props: Schema["reactElements"] & TWFunctionReturnType
   ) => React.JSX.Element,
@@ -1260,8 +1267,15 @@ export class ComponentPropClass<
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
   Params extends Record<string, any>,
-  TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
-  TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
+  TWFunction extends (props: {
+    values: Schema["flattenedSchema"];
+    params: Params;
+  }) => {
+    tw: O;
+  },
+  TWFunctionReturnType extends ConvertToReactElement<
+    ReturnType<TWFunction>["tw"]
+  >,
   ComponentFunction extends (
     props: Schema["reactElements"] & TWFunctionReturnType
   ) => React.JSX.Element,
@@ -1630,8 +1644,15 @@ class ConfigWithTypesClass<
     O extends Record<string, string | string[]>,
     P extends Record<string, any>,
     Params extends Record<string, any>,
-    TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
-    TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
+    TWFunction extends (props: {
+      values: Schema["flattenedSchema"];
+      params: Params;
+    }) => {
+      tw: O;
+    },
+    TWFunctionReturnType extends ConvertToReactElement<
+      ReturnType<TWFunction>["tw"]
+    >,
     ComponentFunction extends (
       props: Schema["reactElements"] & TWFunctionReturnType
     ) => React.JSX.Element
@@ -1710,8 +1731,15 @@ class ConfigWithTypesClass<
     O extends Record<string, string | string[]>,
     P extends Record<string, any>,
     Params extends Record<string, any>,
-    TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
-    TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
+    TWFunction extends (props: {
+      values: Schema["flattenedSchema"];
+      params: Params;
+    }) => {
+      tw: O;
+    },
+    TWFunctionReturnType extends ConvertToReactElement<
+      ReturnType<TWFunction>["tw"]
+    >,
     ComponentFunction extends (
       props: Schema["reactElements"] & TWFunctionReturnType
     ) => React.JSX.Element
@@ -1796,8 +1824,15 @@ class ConfigWithTypesClass<
     O extends Record<string, string | string[]>,
     P extends Record<string, any>,
     Params extends Record<string, any>,
-    TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
-    TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
+    TWFunction extends (props: {
+      values: Schema["flattenedSchema"];
+      params: Params;
+    }) => {
+      tw: O;
+    },
+    TWFunctionReturnType extends ConvertToReactElement<
+      ReturnType<TWFunction>["tw"]
+    >,
     ComponentFunction extends (
       props: Schema["reactElements"] & TWFunctionReturnType
     ) => React.JSX.Element
@@ -1910,8 +1945,15 @@ class DefinitionClass<
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
   Params extends Record<string, any>,
-  TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
-  TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
+  TWFunction extends (props: {
+    values: Schema["flattenedSchema"];
+    params: Params;
+  }) => {
+    tw: O;
+  },
+  TWFunctionReturnType extends ConvertToReactElement<
+    ReturnType<TWFunction>["tw"]
+  >,
   ComponentFunction extends (
     props: Schema["reactElements"] & TWFunctionReturnType
   ) => React.JSX.Element,
@@ -2020,7 +2062,12 @@ interface IDefinitionNoCodeTwFunctionProps<
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
   Params extends Record<string, any>,
-  TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O
+  TWFunction extends (props: {
+    values: Schema["flattenedSchema"];
+    params: Params;
+  }) => {
+    tw: O;
+  }
 > {
   twFunction: TWFunction;
 }
@@ -2034,8 +2081,15 @@ class DefinitionNoCodeTwFunction<
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
   Params extends Record<string, any>,
-  TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
-  TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
+  TWFunction extends (props: {
+    values: Schema["flattenedSchema"];
+    params: Params;
+  }) => {
+    tw: O;
+  },
+  TWFunctionReturnType extends ConvertToReactElement<
+    ReturnType<TWFunction>["tw"]
+  >,
   ComponentFunction extends (
     props: Schema["reactElements"] & TWFunctionReturnType
   ) => React.JSX.Element
