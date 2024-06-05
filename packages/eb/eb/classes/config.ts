@@ -926,7 +926,7 @@ export const config = <
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-// #region BaseProp
+// #region BASE PROP
 export abstract class BasePropClass<T> {
   protected _type?: T;
 
@@ -934,7 +934,6 @@ export abstract class BasePropClass<T> {
 }
 
 // #region GROUP PROP
-
 export class GroupClass<T extends Record<string, BasePropClass<any>>> {
   _props: T;
 
@@ -950,7 +949,6 @@ export class GroupClass<T extends Record<string, BasePropClass<any>>> {
 }
 
 // #region NUMBER PROP
-
 export class NumberPropClass extends BasePropClass<number> {
   private _min?: number;
   private _max?: number;
@@ -980,7 +978,6 @@ export class NumberPropClass extends BasePropClass<number> {
 }
 
 // #region STRING PROP
-
 export class StringPropClass extends BasePropClass<string> {
   private _defaultValue?: string;
 
@@ -996,8 +993,8 @@ export class StringPropClass extends BasePropClass<string> {
     };
   }
 }
-// #region CUSTOM PROP
 
+// #region CUSTOM PROP
 export class CustomPropClass<T> extends BasePropClass<T> {
   private _customType: string;
 
@@ -1097,7 +1094,6 @@ export class ComponentCollectionPropClass<
 }
 
 // #region BOOLEAN PROP
-
 export class BooleanProp extends BasePropClass<boolean> {
   private _defaultValue?: boolean;
 
@@ -1252,7 +1248,6 @@ export class SelectPropClass<
 }
 
 // #region COMPONENT PROP
-
 export class ComponentPropClass<
   T extends Record<
     string,
@@ -1335,8 +1330,7 @@ export class ComponentPropClass<
   }
 }
 
-/// Color Prop ////////////////////////////////////////////////////////////////
-
+// #region COLOR PROP
 // TODO: Add default color - with validation from tokens
 export class ColorPropClass extends BasePropClass<string> {
   _def(): Omit<ColorSchemaProp, "prop"> {
