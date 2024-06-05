@@ -1897,8 +1897,8 @@ interface IDefinitionDef<
   reactElements: FlattenSchemaAndCastToReactElement<T>;
   type: ComponentTypes[number] | Array<ComponentTypes[number]>;
   noCodeComponents: ZodType<O, any, any>;
-  props?: ZodType<P, any, any>;
-  params?: ZodType<Params, any, any>;
+  props: ZodType<P, any, any> | z.ZodObject<any, any>;
+  params: ZodType<Params, any, any> | z.ZodObject<any, any>;
 }
 
 class DefinitionClass<
@@ -2001,8 +2001,8 @@ class DefinitionClass<
       reactElements: this._schemaReactElements,
       type: this._type,
       noCodeComponents: this._noCodeComponents,
-      props: this._props,
-      params: this._params,
+      props: this._props ?? z.object({}),
+      params: this._params ?? z.object({}),
     };
   }
 }
