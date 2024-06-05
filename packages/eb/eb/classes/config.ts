@@ -1025,12 +1025,13 @@ export class ComponentCollectionPropClass<
     params: Params;
   }) => {
     tw: O;
+    props: P;
   },
   TWFunctionReturnType extends ConvertToReactElement<
     ReturnType<TWFunction>["tw"]
   >,
   ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType
+    props: Schema["reactElements"] & TWFunctionReturnType & P
   ) => React.JSX.Element,
   InlineWidgets extends Record<string, InlineWidgetClass<any>>,
   TokenWidgets extends Record<string, TokenWidgetClass<any>>,
@@ -1272,12 +1273,13 @@ export class ComponentPropClass<
     params: Params;
   }) => {
     tw: O;
+    props: P;
   },
   TWFunctionReturnType extends ConvertToReactElement<
     ReturnType<TWFunction>["tw"]
   >,
   ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType
+    props: Schema["reactElements"] & TWFunctionReturnType & P
   ) => React.JSX.Element,
   InlineWidgets extends Record<string, InlineWidgetClass<any>>,
   TokenWidgets extends Record<string, TokenWidgetClass<any>>,
@@ -1649,12 +1651,13 @@ class ConfigWithTypesClass<
       params: Params;
     }) => {
       tw: O;
+      props: P;
     },
     TWFunctionReturnType extends ConvertToReactElement<
       ReturnType<TWFunction>["tw"]
     >,
     ComponentFunction extends (
-      props: Schema["reactElements"] & TWFunctionReturnType
+      props: Schema["reactElements"] & TWFunctionReturnType & P
     ) => React.JSX.Element
   >(
     input: DefinitionClass<
@@ -1736,12 +1739,13 @@ class ConfigWithTypesClass<
       params: Params;
     }) => {
       tw: O;
+      props: P;
     },
     TWFunctionReturnType extends ConvertToReactElement<
       ReturnType<TWFunction>["tw"]
     >,
     ComponentFunction extends (
-      props: Schema["reactElements"] & TWFunctionReturnType
+      props: Schema["reactElements"] & TWFunctionReturnType & P
     ) => React.JSX.Element
   >(
     input: DefinitionClass<
@@ -1829,12 +1833,13 @@ class ConfigWithTypesClass<
       params: Params;
     }) => {
       tw: O;
+      props: P;
     },
     TWFunctionReturnType extends ConvertToReactElement<
       ReturnType<TWFunction>["tw"]
     >,
     ComponentFunction extends (
-      props: Schema["reactElements"] & TWFunctionReturnType
+      props: Schema["reactElements"] & TWFunctionReturnType & P
     ) => React.JSX.Element
   >(
     input: IDefinitionProps<
@@ -1950,12 +1955,13 @@ class DefinitionClass<
     params: Params;
   }) => {
     tw: O;
+    props: P;
   },
   TWFunctionReturnType extends ConvertToReactElement<
     ReturnType<TWFunction>["tw"]
   >,
   ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType
+    props: Schema["reactElements"] & TWFunctionReturnType & P
   ) => React.JSX.Element,
   InlineWidgets extends Record<string, InlineWidgetClass<any>>,
   TokenWidgets extends Record<string, TokenWidgetClass<any>>,
@@ -2067,6 +2073,7 @@ interface IDefinitionNoCodeTwFunctionProps<
     params: Params;
   }) => {
     tw: O;
+    props: P;
   }
 > {
   twFunction: TWFunction;
@@ -2086,12 +2093,13 @@ class DefinitionNoCodeTwFunction<
     params: Params;
   }) => {
     tw: O;
+    props: P;
   },
   TWFunctionReturnType extends ConvertToReactElement<
     ReturnType<TWFunction>["tw"]
   >,
   ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType
+    props: Schema["reactElements"] & TWFunctionReturnType & P
   ) => React.JSX.Element
 > {
   _twFunction: TWFunction;
@@ -2142,7 +2150,7 @@ interface IDefinitionReactComponentProps<
   Params extends Record<string, any>,
   TWFunctionReturnType,
   ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType
+    props: Schema["reactElements"] & TWFunctionReturnType & P
   ) => React.JSX.Element
 > {
   component: ComponentFunction;
@@ -2159,7 +2167,7 @@ class DefinitionReactComponent<
   Params extends Record<string, any>,
   TWFunctionReturnType,
   ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType
+    props: Schema["reactElements"] & TWFunctionReturnType & P
   ) => React.JSX.Element
 > {
   private _component: ComponentFunction;
