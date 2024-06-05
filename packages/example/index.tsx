@@ -110,6 +110,7 @@ const {
   group,
   noCodeComponents,
   noCodeComponentProps,
+  noCodeComponentParams,
   componentProp,
   colorProp,
 } = configWithTypes({
@@ -135,7 +136,10 @@ export const buttonDefinition = definition({
   noCodeComponents: noCodeComponents({
     Button: noCodeComponent(),
   }),
-  thisComponentProps: noCodeComponentProps({}),
+  props: noCodeComponentProps({}),
+  params: noCodeComponentParams({
+    size: z.string(),
+  }),
 });
 
 const buttonNCC = buttonDefinition.twNoCodeComponent(({ values }) => {
@@ -163,7 +167,8 @@ const sectionDefinition = definition({
   noCodeComponents: noCodeComponents({
     Section: noCodeComponent(),
   }),
-  thisComponentProps: noCodeComponentProps({}),
+  props: noCodeComponentProps({}),
+  params: noCodeComponentParams({}),
 });
 
 const sectionNCC = sectionDefinition.twNoCodeComponent(({ values }) => {

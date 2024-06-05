@@ -53,9 +53,11 @@ export type SchemaToPaths<
             any,
             any,
             any,
+            any,
             any
           >
         | ComponentPropClass<
+            any,
             any,
             any,
             any,
@@ -151,10 +153,12 @@ export type ExtrapolateComponentTypes<T> = T extends BasePropClass<infer U>
       any,
       any,
       any,
+      any,
       any
     >
     ? ReactElement[]
     : T extends ComponentPropClass<
+        any,
         any,
         any,
         any,

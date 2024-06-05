@@ -1019,6 +1019,7 @@ export class ComponentCollectionPropClass<
   Schema extends ISchemaReturnType<T>,
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
+  Params extends Record<string, any>,
   TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
   TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
   ComponentFunction extends (
@@ -1043,6 +1044,7 @@ export class ComponentCollectionPropClass<
     Schema,
     O,
     P,
+    Params,
     TWFunction,
     TWFunctionReturnType,
     ComponentFunction,
@@ -1062,6 +1064,7 @@ export class ComponentCollectionPropClass<
     Schema,
     O,
     P,
+    Params,
     TWFunction,
     TWFunctionReturnType,
     ComponentFunction,
@@ -1256,6 +1259,7 @@ export class ComponentPropClass<
   Schema extends ISchemaReturnType<T>,
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
+  Params extends Record<string, any>,
   TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
   TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
   ComponentFunction extends (
@@ -1280,6 +1284,7 @@ export class ComponentPropClass<
     Schema,
     O,
     P,
+    Params,
     TWFunction,
     TWFunctionReturnType,
     ComponentFunction,
@@ -1299,6 +1304,7 @@ export class ComponentPropClass<
     Schema,
     O,
     P,
+    Params,
     TWFunction,
     TWFunctionReturnType,
     ComponentFunction,
@@ -1623,6 +1629,7 @@ class ConfigWithTypesClass<
     Schema extends ISchemaReturnType<U>,
     O extends Record<string, string | string[]>,
     P extends Record<string, any>,
+    Params extends Record<string, any>,
     TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
     TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
     ComponentFunction extends (
@@ -1634,6 +1641,7 @@ class ConfigWithTypesClass<
       Schema,
       O,
       P,
+      Params,
       TWFunction,
       TWFunctionReturnType,
       ComponentFunction,
@@ -1654,6 +1662,7 @@ class ConfigWithTypesClass<
     Schema,
     O,
     P,
+    Params,
     TWFunction,
     TWFunctionReturnType,
     ComponentFunction,
@@ -1674,6 +1683,7 @@ class ConfigWithTypesClass<
       Schema,
       O,
       P,
+      Params,
       TWFunction,
       TWFunctionReturnType,
       ComponentFunction,
@@ -1699,6 +1709,7 @@ class ConfigWithTypesClass<
     Schema extends ISchemaReturnType<U>,
     O extends Record<string, string | string[]>,
     P extends Record<string, any>,
+    Params extends Record<string, any>,
     TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
     TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
     ComponentFunction extends (
@@ -1710,6 +1721,7 @@ class ConfigWithTypesClass<
       Schema,
       O,
       P,
+      Params,
       TWFunction,
       TWFunctionReturnType,
       ComponentFunction,
@@ -1730,6 +1742,7 @@ class ConfigWithTypesClass<
     Schema,
     O,
     P,
+    Params,
     TWFunction,
     TWFunctionReturnType,
     ComponentFunction,
@@ -1750,6 +1763,7 @@ class ConfigWithTypesClass<
       Schema,
       O,
       P,
+      Params,
       TWFunction,
       TWFunctionReturnType,
       ComponentFunction,
@@ -1771,6 +1785,7 @@ class ConfigWithTypesClass<
   noCodeComponentArray = () => z.string().array();
   noCodeComponents = z.object;
   noCodeComponentProps = z.object;
+  noCodeComponentParams = z.object;
 
   definition<
     U extends Record<
@@ -1780,18 +1795,28 @@ class ConfigWithTypesClass<
     Schema extends ISchemaReturnType<U>,
     O extends Record<string, string | string[]>,
     P extends Record<string, any>,
+    Params extends Record<string, any>,
     TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
     TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
     ComponentFunction extends (
       props: Schema["reactElements"] & TWFunctionReturnType
     ) => React.JSX.Element
   >(
-    input: IDefinitionProps<U, Schema, O, P, ComponentType, ComponentTypes>
+    input: IDefinitionProps<
+      U,
+      Schema,
+      O,
+      P,
+      Params,
+      ComponentType,
+      ComponentTypes
+    >
   ): DefinitionClass<
     U,
     Schema,
     O,
     P,
+    Params,
     TWFunction,
     TWFunctionReturnType,
     ComponentFunction,
@@ -1812,6 +1837,7 @@ class ConfigWithTypesClass<
       Schema,
       O,
       P,
+      Params,
       TWFunction,
       TWFunctionReturnType,
       ComponentFunction,
@@ -1842,6 +1868,7 @@ interface IDefinitionProps<
   Schema extends ISchemaReturnType<T>,
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
+  Params extends Record<string, any>,
   ComponentType extends string,
   ComponentTypes extends ComponentType[]
 > {
@@ -1849,7 +1876,8 @@ interface IDefinitionProps<
   schema: Schema;
   type: ComponentTypes[number] | Array<ComponentTypes[number]>;
   noCodeComponents: ZodType<O, any, any>;
-  thisComponentProps: ZodType<P, any, any>;
+  props?: ZodType<P, any, any>;
+  params?: ZodType<Params, any, any>;
 }
 
 interface IDefinitionDef<
@@ -1860,6 +1888,7 @@ interface IDefinitionDef<
   Schema extends ISchemaReturnType<T>,
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
+  Params extends Record<string, any>,
   ComponentType extends string,
   ComponentTypes extends ComponentType[]
 > {
@@ -1868,7 +1897,8 @@ interface IDefinitionDef<
   reactElements: FlattenSchemaAndCastToReactElement<T>;
   type: ComponentTypes[number] | Array<ComponentTypes[number]>;
   noCodeComponents: ZodType<O, any, any>;
-  thisComponentProps: ZodType<P, any, any>;
+  props?: ZodType<P, any, any>;
+  params?: ZodType<Params, any, any>;
 }
 
 class DefinitionClass<
@@ -1879,6 +1909,7 @@ class DefinitionClass<
   Schema extends ISchemaReturnType<T>,
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
+  Params extends Record<string, any>,
   TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
   TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
   ComponentFunction extends (
@@ -1904,11 +1935,20 @@ class DefinitionClass<
   private _flattenedSchema: FlattenSchema<T>;
   private _schemaReactElements: FlattenSchemaAndCastToReactElement<T>;
   private _type: ComponentTypes[number] | Array<ComponentTypes[number]>;
-  _noCodeComponents: ZodType<O, any, any>;
-  _thisComponentProps: ZodType<P, any, any>;
+  private _noCodeComponents: ZodType<O, any, any>;
+  private _props?: ZodType<P, any, any>;
+  private _params?: ZodType<Params, any, any>;
 
   constructor(
-    props: IDefinitionProps<T, Schema, O, P, ComponentType, ComponentTypes>
+    props: IDefinitionProps<
+      T,
+      Schema,
+      O,
+      P,
+      Params,
+      ComponentType,
+      ComponentTypes
+    >
   ) {
     this._id = props.id;
     this._schema = props.schema.schema;
@@ -1916,7 +1956,8 @@ class DefinitionClass<
     this._schemaReactElements = props.schema.reactElements;
     this._type = props.type;
     this._noCodeComponents = props.noCodeComponents;
-    this._thisComponentProps = props.thisComponentProps;
+    this._props = props.props;
+    this._params = props.params;
   }
 
   twNoCodeComponent(
@@ -1926,6 +1967,7 @@ class DefinitionClass<
     Schema,
     O,
     P,
+    Params,
     TWFunction,
     TWFunctionReturnType,
     ComponentFunction
@@ -1935,6 +1977,7 @@ class DefinitionClass<
       Schema,
       O,
       P,
+      Params,
       TWFunction,
       TWFunctionReturnType,
       ComponentFunction
@@ -1943,14 +1986,23 @@ class DefinitionClass<
     });
   }
 
-  _def(): IDefinitionDef<T, Schema, O, P, ComponentType, ComponentTypes> {
+  _def(): IDefinitionDef<
+    T,
+    Schema,
+    O,
+    P,
+    Params,
+    ComponentType,
+    ComponentTypes
+  > {
     return {
       id: this._id,
       flattenedSchema: this._flattenedSchema,
       reactElements: this._schemaReactElements,
       type: this._type,
       noCodeComponents: this._noCodeComponents,
-      thisComponentProps: this._thisComponentProps,
+      props: this._props,
+      params: this._params,
     };
   }
 }
@@ -1967,6 +2019,7 @@ interface IDefinitionNoCodeTwFunctionProps<
   Schema extends ISchemaReturnType<T>,
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
+  Params extends Record<string, any>,
   TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O
 > {
   twFunction: TWFunction;
@@ -1980,6 +2033,7 @@ class DefinitionNoCodeTwFunction<
   Schema extends ISchemaReturnType<T>,
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
+  Params extends Record<string, any>,
   TWFunction extends (props: { values: Schema["flattenedSchema"] }) => O,
   TWFunctionReturnType extends ConvertToReactElement<ReturnType<TWFunction>>,
   ComponentFunction extends (
@@ -1989,7 +2043,7 @@ class DefinitionNoCodeTwFunction<
   _twFunction: TWFunction;
 
   constructor(
-    props: IDefinitionNoCodeTwFunctionProps<T, Schema, O, P, TWFunction>
+    props: IDefinitionNoCodeTwFunctionProps<T, Schema, O, P, Params, TWFunction>
   ) {
     this._twFunction = props.twFunction;
   }
@@ -2001,6 +2055,7 @@ class DefinitionNoCodeTwFunction<
     Schema,
     O,
     P,
+    Params,
     TWFunctionReturnType,
     ComponentFunction
   > {
@@ -2009,6 +2064,7 @@ class DefinitionNoCodeTwFunction<
       Schema,
       O,
       P,
+      Params,
       TWFunctionReturnType,
       ComponentFunction
     >({
@@ -2029,6 +2085,7 @@ interface IDefinitionReactComponentProps<
   Schema extends ISchemaReturnType<T>,
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
+  Params extends Record<string, any>,
   TWFunctionReturnType,
   ComponentFunction extends (
     props: Schema["reactElements"] & TWFunctionReturnType
@@ -2045,6 +2102,7 @@ class DefinitionReactComponent<
   Schema extends ISchemaReturnType<T>,
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
+  Params extends Record<string, any>,
   TWFunctionReturnType,
   ComponentFunction extends (
     props: Schema["reactElements"] & TWFunctionReturnType
@@ -2058,6 +2116,7 @@ class DefinitionReactComponent<
       Schema,
       O,
       P,
+      Params,
       TWFunctionReturnType,
       ComponentFunction
     >
