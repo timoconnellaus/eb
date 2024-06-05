@@ -1597,7 +1597,7 @@ class ConfigWithTypesClass<
     return new ColorPropClass();
   }
 
-  inlineCustom<K extends Extract<keyof InlineTypes, string>>(
+  customTypeInlineProp<K extends Extract<keyof InlineTypes, string>>(
     inlineType: K
   ): CustomPropClass<ExtractInnerTypeFromInlineWidget<InlineWidgets[K]>> {
     return new CustomPropClass<
@@ -1605,7 +1605,7 @@ class ConfigWithTypesClass<
     >(inlineType);
   }
 
-  tokenCustom<K extends Extract<keyof TokenTypes, string>>(
+  customTypeTokenProp<K extends Extract<keyof TokenTypes, string>>(
     tokenType: K
   ): CustomPropClass<ExtractInnerTypeFromTokenWidget<TokenWidgets[K]>> {
     return new CustomPropClass<
@@ -1613,7 +1613,7 @@ class ConfigWithTypesClass<
     >(tokenType);
   }
 
-  externalCustom<K extends Extract<keyof ExternalTypes, string>>(
+  customTypeExternalProp<K extends Extract<keyof ExternalTypes, string>>(
     externalType: K
   ): CustomPropClass<ExtractInnerTypeFromExternalWidget<ExternalWidgets[K]>> {
     return new CustomPropClass<
@@ -1773,8 +1773,8 @@ class ConfigWithTypesClass<
     >(input);
   }
 
-  component = () => z.string();
-  componentArray = () => z.string().array();
+  noCodeComponent = () => z.string();
+  noCodeComponentArray = () => z.string().array();
   noCodeComponents = z.object;
   noCodeComponentProps = z.object;
 

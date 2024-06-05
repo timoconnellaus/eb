@@ -101,14 +101,14 @@ const {
   stringProp,
   numberProp,
   selectProp,
-  componentArray,
-  inlineCustom,
-  tokenCustom,
-  externalCustom,
+  noCodeComponent,
+  noCodeComponentArray,
+  customTypeInlineProp,
+  customTypeTokenProp,
+  customTypeExternalProp,
   componentCollectionProp,
   group,
   noCodeComponents,
-  component,
   noCodeComponentProps,
   componentProp,
   colorProp,
@@ -129,10 +129,11 @@ export const buttonDefinition = definition({
   type: "button",
   schema: schema({
     height: numberProp().defaultValue(10),
-    size: tokenCustom("color"),
+    size: customTypeTokenProp("color"),
+    url: customTypeInlineProp("url"),
   }),
   noCodeComponents: noCodeComponents({
-    Button: component(),
+    Button: noCodeComponent(),
   }),
   thisComponentProps: noCodeComponentProps({}),
 });
@@ -160,7 +161,7 @@ const sectionDefinition = definition({
     bg: colorProp(),
   }),
   noCodeComponents: noCodeComponents({
-    Section: component(),
+    Section: noCodeComponent(),
   }),
   thisComponentProps: noCodeComponentProps({}),
 });
@@ -182,13 +183,3 @@ const sectionComponent = sectionNCC.component((props) => {
     </Section.type>
   );
 });
-
-export {
-  group,
-  numberProp,
-  stringProp,
-  inlineCustom,
-  tokenCustom,
-  externalCustom,
-  componentCollectionProp,
-};
