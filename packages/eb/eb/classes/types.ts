@@ -33,48 +33,7 @@ export type SchemaToPaths<
   Key = keyof T
 > = Key extends string
   ? T[Key] extends BasePropClass<any>
-    ? // we don't want to include the component collection prop in the final output as it's not a value
-      T[Key] extends
-        | ComponentCollectionPropClass<
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any
-          >
-        | ComponentPropClass<
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any,
-            any
-          >
-      ? `SKIP_THIS_PROPERTY`
-      : `${Key}`
+    ? `${Key}`
     : T[Key] extends GroupClass<any>
     ? `${Key}.${SchemaToPaths<T[Key]["_props"]>}`
     : never
@@ -83,9 +42,68 @@ export type SchemaToPaths<
 // Recursively get the types of each nested property of a schema
 // This is used to get the inner type e.g. BaseType<string> becomes string
 // eg. GroupClass<{ a: BaseType<string> }> becomes { a: string }
-export type ExtrapolateTypes<T> = T extends BasePropClass<infer U>
+export type ExtrapolateTypes<T> = T extends ComponentCollectionPropClass<
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  infer SchemaProps,
+  any
+>
+  ? SchemaProps extends Record<
+      string,
+      BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+    >
+    ? Array<{ [K in keyof SchemaProps]: ExtrapolateTypes<SchemaProps[K]> }>
+    : Array<{}> // if the schema props are empty, we return an empty array
+  : // for a component prop, we need to extrapolate the schema props into a single object
+  T extends ComponentPropClass<
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      infer SchemaProps,
+      any
+    >
+  ? SchemaProps extends Record<
+      string,
+      BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+    >
+    ? {
+        [K in keyof SchemaProps]: ExtrapolateTypes<SchemaProps[K]>;
+      }
+    : {} // if the schema props are empty, we return an empty object
+  : // this is any other type of prop
+
+  T extends BasePropClass<infer U>
   ? U extends ZodEnum<any>
-    ? z.infer<U>
+    ? z.infer<U> // return the zod enum type inferred correctly
     : U
   : T extends GroupClass<infer G>
   ? ExtrapolateTypes<G>
@@ -148,10 +166,14 @@ export type ExtrapolateComponentTypes<T> = T extends BasePropClass<infer U>
       any,
       any,
       any,
+      any,
+      any,
       any
     >
     ? ReactElement[]
     : T extends ComponentPropClass<
+        any,
+        any,
         any,
         any,
         any,
@@ -217,6 +239,90 @@ export type FlattenSchemaAndCastToReactElement<
   >
 >;
 
+// components prop
+
+type CastArrayToUnion<T> = T extends Array<infer U> ? U : never;
+
+export type ExtrapolateComponentTypesToDownstreamParams<T> =
+  T extends BasePropClass<infer U>
+    ? T extends ComponentCollectionPropClass<
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any
+      >
+      ? Array<Record<string, any>>
+      : T extends ComponentPropClass<
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any
+        >
+      ? Record<string, any>
+      : "IGNORE"
+    : T extends GroupClass<infer G>
+    ? ExtrapolateComponentTypesToDownstreamParams<G>
+    : T extends Record<
+        string,
+        BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+      >
+    ? { [K in keyof T]: ExtrapolateComponentTypesToDownstreamParams<T[K]> }
+    : "IGNORE";
+
+export type CastToDownstreamParams<T> = T extends
+  | Record<string, any>
+  | Array<Record<string, any>>
+  ? T
+  : T extends string
+  ? never
+  : T;
+
+export type FlattenSchemaAndCastToDownstreamParams<
+  T extends Record<string, GroupClass<any> | BasePropClass<any>>
+> = FilterIgnore<
+  CastToDownstreamParams<
+    RenameKeys<
+      MappedPaths<
+        ExtrapolateComponentTypesToDownstreamParams<T>,
+        ExcludeSkippedProps<SchemaToPathsReactElements<T>>
+      >
+    >
+  >
+>;
+
+////
+
 type StringToElement<T> = T extends string
   ? ReactElement
   : T extends string[]
@@ -228,26 +334,6 @@ export type ConvertToReactElement<T> = {
 };
 
 // TODO: Assert the length of the union is the same as the length of the paths - to ensure no dulicates used
-// conver a union to an intersection
-// type UnionToIntersection<U> =
-//   (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
-
-// // get the last element of a union - we use this to get the type
-// type LastOf<T> =
-//   UnionToIntersection<T extends any ? (x: T) => void : never> extends (x: infer L) => void ? L : never;
-
-// // convert a union to a tuple
-// type UnionToTuple<T, L = LastOf<T>> =
-//   [T] extends [never] ? [] : [...UnionToTuple<Exclude<T, L>>, L];
-
-// type LengthOfUnion<T> = UnionToTuple<T>['length']
-
-// type AssertSameLength<U1, U2> = LengthOfUnion<U1> extends LengthOfUnion<U2> ?
-//   (LengthOfUnion<U2> extends LengthOfUnion<U1> ? true : never) : never;
-
-// type test = "a" | "b"
-// type test2 = "a" | "b" | "c"
-// type test3 = AssertSameLength<test, test2>
 
 // exclude any paths that are in the component collection prop
 export type ExcludeSkippedProps<T extends string> =

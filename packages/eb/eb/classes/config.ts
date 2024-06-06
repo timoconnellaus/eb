@@ -29,6 +29,7 @@ import type {
   ConvertToReactElement,
   ExtractInnerTypeFromExternalWidget,
   FlattenSchema,
+  FlattenSchemaAndCastToDownstreamParams,
   FlattenSchemaAndCastToReactElement,
   WithChildren,
   WithEasyblocksAndId,
@@ -1061,6 +1062,11 @@ export class ComponentCollectionPropClass<
     TokenTypeClass<TokenWidgets, any, CustomTokens, StandardTokens>
   >,
   ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>,
+  SubSchemaT extends Record<
+    string,
+    BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+  >,
+  SubSchema extends ISchemaReturnType<SubSchemaT>,
   Definitions extends (
     | DefinitionClass<
         T,
@@ -1104,17 +1110,115 @@ export class ComponentCollectionPropClass<
       >
     | ExtendedComponentTypes[number]
   )[]
-> extends BasePropClass<string> {
+> extends BasePropClass<any> {
   private _components: Definitions;
+  private _schema: ISchemaReturnType<SubSchemaT>;
 
-  constructor(components: Definitions) {
+  constructor(props: { components: Definitions; schema?: SubSchemaT }) {
     super();
-    this._components = components;
+    this._components = props.components;
+    this._schema = schemaTransform<SubSchemaT>(
+      props.schema ?? ({} as SubSchemaT)
+    );
   }
 
   _def(): Omit<ComponentCollectionSchemaProp, "prop"> {
     return {
       type: "component-collection",
+      // accepts: this._components.map((c) => c._def().id),
+      accepts: [],
+    };
+  }
+}
+
+// #region COMPONENT PROP
+export class ComponentPropClass<
+  T extends Record<
+    string,
+    BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+  >,
+  Schema extends ISchemaReturnType<T>,
+  O extends Record<string, string | string[]>,
+  P extends Record<string, any>,
+  Params extends Record<string, any>,
+  InlineWidgets extends Record<string, InlineWidgetClass<any>>,
+  TokenWidgets extends Record<string, TokenWidgetClass<any>>,
+  ExternalWidgets extends Record<string, ExternalWidgetClass<any>>,
+  CustomTokens extends Record<string, TokenSetClass<any, any, any>>,
+  StandardTokens extends Partial<IStandardTokenTypes>,
+  ComponentType extends string,
+  ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
+  Devices extends DevicesClass,
+  InlineTypes extends Record<string, InlineTypeClass<InlineWidgets, any>>,
+  TokenTypes extends Record<
+    string,
+    TokenTypeClass<TokenWidgets, any, CustomTokens, StandardTokens>
+  >,
+  ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>,
+  SubSchemaT extends Record<
+    string,
+    BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+  >,
+  SubSchema extends ISchemaReturnType<SubSchemaT>,
+  Definitions extends (
+    | DefinitionClass<
+        T,
+        Schema,
+        O,
+        P,
+        Params,
+        InlineWidgets,
+        TokenWidgets,
+        ExternalWidgets,
+        CustomTokens,
+        StandardTokens,
+        ComponentType,
+        ComponentTypes,
+        ExtendedComponentTypes,
+        Devices,
+        InlineTypes,
+        TokenTypes,
+        ExternalTypes
+      >
+    | ExtendedComponentTypes[number]
+  )[] = (
+    | DefinitionClass<
+        T,
+        Schema,
+        O,
+        P,
+        Params,
+        InlineWidgets,
+        TokenWidgets,
+        ExternalWidgets,
+        CustomTokens,
+        StandardTokens,
+        ComponentType,
+        ComponentTypes,
+        ExtendedComponentTypes,
+        Devices,
+        InlineTypes,
+        TokenTypes,
+        ExternalTypes
+      >
+    | ExtendedComponentTypes[number]
+  )[]
+> extends BasePropClass<any> {
+  private _components: Definitions;
+  private _schema: ISchemaReturnType<SubSchemaT>;
+
+  constructor(props: { components: Definitions; schema?: SubSchemaT }) {
+    super();
+    this._components = props.components;
+    this._schema = schemaTransform<SubSchemaT>(
+      props.schema ?? ({} as SubSchemaT)
+    );
+  }
+
+  _def(): Omit<ComponentSchemaProp, "prop"> {
+    return {
+      type: "component",
       // accepts: this._components.map((c) => c._def().id),
       accepts: [],
     };
@@ -1271,91 +1375,6 @@ export class SelectPropClass<
       params: {
         options: this._optionsArray,
       },
-    };
-  }
-}
-
-// #region COMPONENT PROP
-export class ComponentPropClass<
-  T extends Record<
-    string,
-    BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
-  >,
-  Schema extends ISchemaReturnType<T>,
-  O extends Record<string, string | string[]>,
-  P extends Record<string, any>,
-  Params extends Record<string, any>,
-  InlineWidgets extends Record<string, InlineWidgetClass<any>>,
-  TokenWidgets extends Record<string, TokenWidgetClass<any>>,
-  ExternalWidgets extends Record<string, ExternalWidgetClass<any>>,
-  CustomTokens extends Record<string, TokenSetClass<any, any, any>>,
-  StandardTokens extends Partial<IStandardTokenTypes>,
-  ComponentType extends string,
-  ComponentTypes extends ComponentType[],
-  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
-  Devices extends DevicesClass,
-  InlineTypes extends Record<string, InlineTypeClass<InlineWidgets, any>>,
-  TokenTypes extends Record<
-    string,
-    TokenTypeClass<TokenWidgets, any, CustomTokens, StandardTokens>
-  >,
-  ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>,
-  Definitions extends (
-    | DefinitionClass<
-        T,
-        Schema,
-        O,
-        P,
-        Params,
-        InlineWidgets,
-        TokenWidgets,
-        ExternalWidgets,
-        CustomTokens,
-        StandardTokens,
-        ComponentType,
-        ComponentTypes,
-        ExtendedComponentTypes,
-        Devices,
-        InlineTypes,
-        TokenTypes,
-        ExternalTypes
-      >
-    | ExtendedComponentTypes[number]
-  )[] = (
-    | DefinitionClass<
-        T,
-        Schema,
-        O,
-        P,
-        Params,
-        InlineWidgets,
-        TokenWidgets,
-        ExternalWidgets,
-        CustomTokens,
-        StandardTokens,
-        ComponentType,
-        ComponentTypes,
-        ExtendedComponentTypes,
-        Devices,
-        InlineTypes,
-        TokenTypes,
-        ExternalTypes
-      >
-    | ExtendedComponentTypes[number]
-  )[]
-> extends BasePropClass<string> {
-  private _components: Definitions;
-
-  constructor(components: Definitions) {
-    super();
-    this._components = components;
-  }
-
-  _def(): Omit<ComponentSchemaProp, "prop"> {
-    return {
-      type: "component",
-      // accepts: this._components.map((c) => c._def().id),
-      accepts: [],
     };
   }
 }
@@ -1525,6 +1544,42 @@ interface ISchemaReturnType<
   schema: T;
   flattenedSchema: FlattenSchema<T>;
   reactElements: FlattenSchemaAndCastToReactElement<T>;
+  components: FlattenSchemaAndCastToDownstreamParams<T>;
+}
+
+function schemaTransform<
+  T extends Record<
+    string,
+    BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+  >
+>(schema: T): ISchemaReturnType<T> {
+  const schemaStructure: any = {};
+  const reactElements: any = {};
+  const components: any = {};
+  Object.keys(schema).forEach((key) => {
+    const prop = schema[key as keyof T];
+    if (prop instanceof GroupClass) {
+      const GroupClassProps = prop._props;
+      Object.keys(GroupClassProps).forEach((key) => {
+        const gProp = GroupClassProps[key as keyof T as string];
+        schemaStructure[key as keyof T as string] = gProp;
+      });
+    } else if (
+      prop instanceof ComponentCollectionPropClass ||
+      prop instanceof ComponentPropClass
+    ) {
+      reactElements[key as keyof T as string] = createElement("div");
+      components[key as keyof T as string] = {};
+    } else {
+      schemaStructure[key as keyof T as string] = prop;
+    }
+  });
+  return {
+    schema: schema,
+    flattenedSchema: schemaStructure,
+    reactElements: reactElements,
+    components: components,
+  };
 }
 
 class ConfigWithTypesClass<
@@ -1581,31 +1636,43 @@ class ConfigWithTypesClass<
       BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
     >
   >(schema: T): ISchemaReturnType<T> {
-    const schemaStructure: any = {};
-    const reactElements: any = {};
-    Object.keys(schema).forEach((key) => {
-      const prop = schema[key as keyof T];
-      if (prop instanceof GroupClass) {
-        const GroupClassProps = prop._props;
-        Object.keys(GroupClassProps).forEach((key) => {
-          const gProp = GroupClassProps[key as keyof T as string];
-          schemaStructure[key as keyof T as string] = gProp;
-        });
-      } else if (
-        prop instanceof ComponentCollectionPropClass ||
-        prop instanceof ComponentPropClass
-      ) {
-        reactElements[key as keyof T as string] = createElement("div");
-      } else {
-        schemaStructure[key as keyof T as string] = prop;
-      }
-    });
-    return {
-      schema: schema,
-      flattenedSchema: schemaStructure,
-      reactElements: reactElements,
-    };
+    return schemaTransform<T>(schema);
   }
+
+  // schema<
+  //   T extends Record<
+  //     string,
+  //     BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+  //   >
+  // >(schema: T): ISchemaReturnType<T> {
+  //   const schemaStructure: any = {};
+  //   const reactElements: any = {};
+  //   const components: any = {};
+  //   Object.keys(schema).forEach((key) => {
+  //     const prop = schema[key as keyof T];
+  //     if (prop instanceof GroupClass) {
+  //       const GroupClassProps = prop._props;
+  //       Object.keys(GroupClassProps).forEach((key) => {
+  //         const gProp = GroupClassProps[key as keyof T as string];
+  //         schemaStructure[key as keyof T as string] = gProp;
+  //       });
+  //     } else if (
+  //       prop instanceof ComponentCollectionPropClass ||
+  //       prop instanceof ComponentPropClass
+  //     ) {
+  //       reactElements[key as keyof T as string] = createElement("div");
+  //       components[key as keyof T as string] = {};
+  //     } else {
+  //       schemaStructure[key as keyof T as string] = prop;
+  //     }
+  //   });
+  //   return {
+  //     schema: schema,
+  //     flattenedSchema: schemaStructure,
+  //     reactElements: reactElements,
+  //     components: components,
+  //   };
+  // }
 
   stringProp() {
     return new StringPropClass();
@@ -1673,130 +1740,198 @@ class ConfigWithTypesClass<
     return def;
   }
 
-  componentCollectionProp(
-    input: (
+  componentCollectionProp<
+    T extends Record<
+      string,
+      BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+    >,
+    Schema extends ISchemaReturnType<T>,
+    O extends Record<string, string | string[]>,
+    P extends Record<string, any>,
+    Params extends Record<string, any>,
+    InlineWidgets extends Record<string, InlineWidgetClass<any>>,
+    TokenWidgets extends Record<string, TokenWidgetClass<any>>,
+    ExternalWidgets extends Record<string, ExternalWidgetClass<any>>,
+    CustomTokens extends Record<string, TokenSetClass<any, any, any>>,
+    StandardTokens extends Partial<IStandardTokenTypes>,
+    ComponentType extends string,
+    ComponentTypes extends ComponentType[],
+    ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
+    Devices extends DevicesClass,
+    InlineTypes extends Record<string, InlineTypeClass<InlineWidgets, any>>,
+    TokenTypes extends Record<
+      string,
+      TokenTypeClass<TokenWidgets, any, CustomTokens, StandardTokens>
+    >,
+    ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>,
+    SubSchemaT extends Record<
+      string,
+      BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+    >,
+    SubSchema extends ISchemaReturnType<SubSchemaT>
+  >(props: {
+    components: (
       | DefinitionClass<
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any
+          T,
+          Schema,
+          O,
+          P,
+          Params,
+          InlineWidgets,
+          TokenWidgets,
+          ExternalWidgets,
+          CustomTokens,
+          StandardTokens,
+          ComponentType,
+          ComponentTypes,
+          ExtendedComponentTypes,
+          Devices,
+          InlineTypes,
+          TokenTypes,
+          ExternalTypes
         >
       | ExtendedComponentTypes[number]
-    )[]
-  ): ComponentCollectionPropClass<
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any
+    )[];
+    schema?: SubSchemaT;
+  }): ComponentCollectionPropClass<
+    T,
+    Schema,
+    O,
+    P,
+    Params,
+    InlineWidgets,
+    TokenWidgets,
+    ExternalWidgets,
+    CustomTokens,
+    StandardTokens,
+    ComponentType,
+    ComponentTypes,
+    ExtendedComponentTypes,
+    Devices,
+    InlineTypes,
+    TokenTypes,
+    ExternalTypes,
+    SubSchemaT,
+    SubSchema
   > {
     return new ComponentCollectionPropClass<
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any
-    >(input);
+      T,
+      Schema,
+      O,
+      P,
+      Params,
+      InlineWidgets,
+      TokenWidgets,
+      ExternalWidgets,
+      CustomTokens,
+      StandardTokens,
+      ComponentType,
+      ComponentTypes,
+      ExtendedComponentTypes,
+      Devices,
+      InlineTypes,
+      TokenTypes,
+      ExternalTypes,
+      SubSchemaT,
+      SubSchema
+    >(props);
   }
 
-  componentProp(
-    input: (
+  componentProp<
+    T extends Record<
+      string,
+      BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+    >,
+    Schema extends ISchemaReturnType<T>,
+    O extends Record<string, string | string[]>,
+    P extends Record<string, any>,
+    Params extends Record<string, any>,
+    InlineWidgets extends Record<string, InlineWidgetClass<any>>,
+    TokenWidgets extends Record<string, TokenWidgetClass<any>>,
+    ExternalWidgets extends Record<string, ExternalWidgetClass<any>>,
+    CustomTokens extends Record<string, TokenSetClass<any, any, any>>,
+    StandardTokens extends Partial<IStandardTokenTypes>,
+    ComponentType extends string,
+    ComponentTypes extends ComponentType[],
+    ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
+    Devices extends DevicesClass,
+    InlineTypes extends Record<string, InlineTypeClass<InlineWidgets, any>>,
+    TokenTypes extends Record<
+      string,
+      TokenTypeClass<TokenWidgets, any, CustomTokens, StandardTokens>
+    >,
+    ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>,
+    SubSchemaT extends Record<
+      string,
+      BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+    >,
+    SubSchema extends ISchemaReturnType<SubSchemaT>
+  >(props: {
+    components: (
       | DefinitionClass<
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any,
-          any
+          T,
+          Schema,
+          O,
+          P,
+          Params,
+          InlineWidgets,
+          TokenWidgets,
+          ExternalWidgets,
+          CustomTokens,
+          StandardTokens,
+          ComponentType,
+          ComponentTypes,
+          ExtendedComponentTypes,
+          Devices,
+          InlineTypes,
+          TokenTypes,
+          ExternalTypes
         >
       | ExtendedComponentTypes[number]
-    )[]
-  ): ComponentPropClass<
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any
+    )[];
+    schema: SubSchemaT;
+  }): ComponentPropClass<
+    T,
+    Schema,
+    O,
+    P,
+    Params,
+    InlineWidgets,
+    TokenWidgets,
+    ExternalWidgets,
+    CustomTokens,
+    StandardTokens,
+    ComponentType,
+    ComponentTypes,
+    ExtendedComponentTypes,
+    Devices,
+    InlineTypes,
+    TokenTypes,
+    ExternalTypes,
+    SubSchemaT,
+    SubSchema
   > {
     return new ComponentPropClass<
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any
-    >(input);
+      T,
+      Schema,
+      O,
+      P,
+      Params,
+      InlineWidgets,
+      TokenWidgets,
+      ExternalWidgets,
+      CustomTokens,
+      StandardTokens,
+      ComponentType,
+      ComponentTypes,
+      ExtendedComponentTypes,
+      Devices,
+      InlineTypes,
+      TokenTypes,
+      ExternalTypes,
+      SubSchemaT,
+      SubSchema
+    >(props);
   }
 
   noCodeComponent = () => z.string();
@@ -1820,6 +1955,7 @@ class ConfigWithTypesClass<
     }) => {
       tw: O;
       props: P;
+      components: Schema["components"];
     },
     TWFunctionReturnType extends ConvertToReactElement<
       ReturnType<TWFunction>["tw"]
@@ -2087,6 +2223,7 @@ class ReusableDefinitionClass<
     }) => {
       tw: O;
       props: P;
+      components: Schema["components"];
     },
     IsReusable extends true
   >(
@@ -2275,6 +2412,7 @@ class DefinitionClass<
     }) => {
       tw: O;
       props: P;
+      components: Schema["components"];
     },
     HasChildren extends boolean,
     IsReusable extends false
@@ -2346,6 +2484,7 @@ interface IDefinitionNoCodeTwFunctionProps<
   }) => {
     tw: O;
     props: P;
+    components: Schema["components"];
   },
   HasChildren extends boolean,
   IsReusable extends boolean
@@ -2368,6 +2507,7 @@ class DefinitionNoCodeTwFunction<
   }) => {
     tw: O;
     props: P;
+    components: Schema["components"];
   },
   HasChildren extends boolean,
   IsReusable extends boolean
@@ -2390,6 +2530,10 @@ class DefinitionNoCodeTwFunction<
   }) {
     this._twFunction = props.twFunction.twFunction;
     this._hasChildren = props.hasChildren;
+  }
+
+  public get twFunction(): TWFunction {
+    return this._twFunction;
   }
 
   tw(props: { values: Schema["flattenedSchema"]; params: Params }): {
