@@ -1040,19 +1040,6 @@ export class ComponentCollectionPropClass<
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
   Params extends Record<string, any>,
-  TWFunction extends (props: {
-    values: Schema["flattenedSchema"];
-    params: Params;
-  }) => {
-    tw: O;
-    props: P;
-  },
-  TWFunctionReturnType extends ConvertToReactElement<
-    ReturnType<TWFunction>["tw"]
-  >,
-  ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType & P
-  ) => React.JSX.Element,
   InlineWidgets extends Record<string, InlineWidgetClass<any>>,
   TokenWidgets extends Record<string, TokenWidgetClass<any>>,
   ExternalWidgets extends Record<string, ExternalWidgetClass<any>>,
@@ -1075,9 +1062,6 @@ export class ComponentCollectionPropClass<
         O,
         P,
         Params,
-        TWFunction,
-        TWFunctionReturnType,
-        ComponentFunction,
         InlineWidgets,
         TokenWidgets,
         ExternalWidgets,
@@ -1099,9 +1083,6 @@ export class ComponentCollectionPropClass<
         O,
         P,
         Params,
-        TWFunction,
-        TWFunctionReturnType,
-        ComponentFunction,
         InlineWidgets,
         TokenWidgets,
         ExternalWidgets,
@@ -1298,19 +1279,6 @@ export class ComponentPropClass<
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
   Params extends Record<string, any>,
-  TWFunction extends (props: {
-    values: Schema["flattenedSchema"];
-    params: Params;
-  }) => {
-    tw: O;
-    props: P;
-  },
-  TWFunctionReturnType extends ConvertToReactElement<
-    ReturnType<TWFunction>["tw"]
-  >,
-  ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType & P
-  ) => React.JSX.Element,
   InlineWidgets extends Record<string, InlineWidgetClass<any>>,
   TokenWidgets extends Record<string, TokenWidgetClass<any>>,
   ExternalWidgets extends Record<string, ExternalWidgetClass<any>>,
@@ -1333,9 +1301,6 @@ export class ComponentPropClass<
         O,
         P,
         Params,
-        TWFunction,
-        TWFunctionReturnType,
-        ComponentFunction,
         InlineWidgets,
         TokenWidgets,
         ExternalWidgets,
@@ -1357,9 +1322,6 @@ export class ComponentPropClass<
         O,
         P,
         Params,
-        TWFunction,
-        TWFunctionReturnType,
-        ComponentFunction,
         InlineWidgets,
         TokenWidgets,
         ExternalWidgets,
@@ -1726,9 +1688,6 @@ class ConfigWithTypesClass<
           any,
           any,
           any,
-          any,
-          any,
-          any,
           any
         >
       | ExtendedComponentTypes[number]
@@ -1750,15 +1709,9 @@ class ConfigWithTypesClass<
     any,
     any,
     any,
-    any,
-    any,
-    any,
     any
   > {
     return new ComponentCollectionPropClass<
-      any,
-      any,
-      any,
       any,
       any,
       any,
@@ -1798,9 +1751,6 @@ class ConfigWithTypesClass<
           any,
           any,
           any,
-          any,
-          any,
-          any,
           any
         >
       | ExtendedComponentTypes[number]
@@ -1822,15 +1772,9 @@ class ConfigWithTypesClass<
     any,
     any,
     any,
-    any,
-    any,
-    any,
     any
   > {
     return new ComponentPropClass<
-      any,
-      any,
-      any,
       any,
       any,
       any,
@@ -1975,9 +1919,6 @@ class ConfigWithTypesClass<
     O,
     P,
     Params,
-    TWFunction,
-    TWFunctionReturnType,
-    ComponentFunction,
     InlineWidgets,
     TokenWidgets,
     ExternalWidgets,
@@ -1997,9 +1938,6 @@ class ConfigWithTypesClass<
       O,
       P,
       Params,
-      TWFunction,
-      TWFunctionReturnType,
-      ComponentFunction,
       InlineWidgets,
       TokenWidgets,
       ExternalWidgets,
@@ -2158,26 +2096,8 @@ class ReusableDefinitionClass<
 
   twNoCodeComponent(
     twFunction: TWFunction
-  ): DefinitionNoCodeTwFunction<
-    T,
-    Schema,
-    O,
-    P,
-    Params,
-    TWFunction,
-    TWFunctionReturnType,
-    ComponentFunction
-  > {
-    return new DefinitionNoCodeTwFunction<
-      T,
-      Schema,
-      O,
-      P,
-      Params,
-      TWFunction,
-      TWFunctionReturnType,
-      ComponentFunction
-    >({
+  ): DefinitionNoCodeTwFunction<T, Schema, O, P, Params, TWFunction> {
+    return new DefinitionNoCodeTwFunction<T, Schema, O, P, Params, TWFunction>({
       twFunction: { twFunction },
       hasChildren: this._acceptsChildren,
       isReusable: true,
@@ -2258,19 +2178,19 @@ class DefinitionClass<
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
   Params extends Record<string, any>,
-  TWFunction extends (props: {
-    values: Schema["flattenedSchema"];
-    params: Params;
-  }) => {
-    tw: O;
-    props: P;
-  },
-  TWFunctionReturnType extends ConvertToReactElement<
-    ReturnType<TWFunction>["tw"]
-  >,
-  ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType & P
-  ) => React.JSX.Element,
+  // TWFunction extends (props: {
+  //   values: Schema["flattenedSchema"];
+  //   params: Params;
+  // }) => {
+  //   tw: O;
+  //   props: P;
+  // },
+  // TWFunctionReturnType extends ConvertToReactElement<
+  //   ReturnType<TWFunction>["tw"]
+  // >,
+  // ComponentFunction extends (
+  //   props: Schema["reactElements"] & TWFunctionReturnType & P
+  // ) => React.JSX.Element,
   InlineWidgets extends Record<string, InlineWidgetClass<any>>,
   TokenWidgets extends Record<string, TokenWidgetClass<any>>,
   ExternalWidgets extends Record<string, ExternalWidgetClass<any>>,
@@ -2349,28 +2269,18 @@ class DefinitionClass<
     this._baseConfigWithTypes = props.baseConfigWithTypes;
   }
 
-  twNoCodeComponent(
+  twNoCodeComponent<
+    TWFunction extends (props: {
+      values: Schema["flattenedSchema"];
+      params: Params;
+    }) => {
+      tw: O;
+      props: P;
+    }
+  >(
     twFunction: TWFunction
-  ): DefinitionNoCodeTwFunction<
-    T,
-    Schema,
-    O,
-    P,
-    Params,
-    TWFunction,
-    TWFunctionReturnType,
-    ComponentFunction
-  > {
-    return new DefinitionNoCodeTwFunction<
-      T,
-      Schema,
-      O,
-      P,
-      Params,
-      TWFunction,
-      TWFunctionReturnType,
-      ComponentFunction
-    >({
+  ): DefinitionNoCodeTwFunction<T, Schema, O, P, Params, TWFunction> {
+    return new DefinitionNoCodeTwFunction<T, Schema, O, P, Params, TWFunction>({
       twFunction: { twFunction },
       hasChildren: false,
       isReusable: false,
@@ -2438,13 +2348,7 @@ class DefinitionNoCodeTwFunction<
   }) => {
     tw: O;
     props: P;
-  },
-  TWFunctionReturnType extends ConvertToReactElement<
-    ReturnType<TWFunction>["tw"]
-  >,
-  ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType & P
-  ) => React.JSX.Element
+  }
 > {
   _twFunction: TWFunction;
   _hasChildren: boolean;
@@ -2467,7 +2371,14 @@ class DefinitionNoCodeTwFunction<
     this._isReusable = props.isReusable;
   }
 
-  component(component: ComponentFunction): ComponentFunction {
+  component<
+    TWFunctionReturnType extends ConvertToReactElement<
+      ReturnType<TWFunction>["tw"]
+    >,
+    ComponentFunction extends (
+      props: Schema["reactElements"] & TWFunctionReturnType & P
+    ) => React.JSX.Element
+  >(component: ComponentFunction): ComponentFunction {
     const newComponent = new DefinitionReactComponent<
       T,
       Schema,
