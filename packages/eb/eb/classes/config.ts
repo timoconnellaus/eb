@@ -26,6 +26,8 @@ import type {
   ExtractInnerTypeFromExternalWidget,
   FlattenSchema,
   FlattenSchemaAndCastToReactElement,
+  WithChildren,
+  WithEasyblocksAndId,
 } from "./types";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1822,7 +1824,9 @@ class ConfigWithTypesClass<
     >,
     ComponentFunction extends (
       props: Schema["reactElements"] & TWFunctionReturnType & P
-    ) => React.JSX.Element
+    ) => React.JSX.Element,
+    HasChildren extends boolean,
+    IsReusable extends true
   >(
     input: IReusableDefinitionProps<
       U,
@@ -1832,7 +1836,8 @@ class ConfigWithTypesClass<
       Params,
       ComponentType,
       ComponentTypes,
-      ExtendedComponentTypes
+      ExtendedComponentTypes,
+      HasChildren
     >
   ): ReusableDefinitionClass<
     U,
@@ -1854,7 +1859,8 @@ class ConfigWithTypesClass<
     Devices,
     InlineTypes,
     TokenTypes,
-    ExternalTypes
+    ExternalTypes,
+    HasChildren
   > {
     return new ReusableDefinitionClass<
       U,
@@ -1876,7 +1882,8 @@ class ConfigWithTypesClass<
       Devices,
       InlineTypes,
       TokenTypes,
-      ExternalTypes
+      ExternalTypes,
+      HasChildren
     >({ def: input, baseConfigWithTypes: this });
   }
 
@@ -1971,12 +1978,13 @@ interface IReusableDefinitionProps<
   Params extends Record<string, any>,
   ComponentType extends string,
   ComponentTypes extends ComponentType[],
-  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE]
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
+  HasChildren extends boolean
 > {
   schema: Schema;
   noCodeComponents: ZodType<O, any, any>;
   props?: ZodType<P, any, any>;
-  acceptsChildren: boolean;
+  acceptsChildren: HasChildren;
 }
 
 interface IReusableDefinitionDef<
@@ -2035,7 +2043,9 @@ class ReusableDefinitionClass<
     string,
     TokenTypeClass<TokenWidgets, any, CustomTokens, StandardTokens>
   >,
-  ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>
+  ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>,
+  HasChildren extends boolean,
+  IsReusable extends true = true
 > {
   private _baseConfigWithTypes: ConfigWithTypesClass<
     InlineWidgets,
@@ -2057,7 +2067,7 @@ class ReusableDefinitionClass<
   private _schemaReactElements: FlattenSchemaAndCastToReactElement<T>;
   private _noCodeComponents: ZodType<O, any, any>;
   private _props?: ZodType<P, any, any>;
-  private _acceptsChildren: boolean;
+  private _acceptsChildren: HasChildren;
 
   constructor(props: {
     def: IReusableDefinitionProps<
@@ -2068,7 +2078,8 @@ class ReusableDefinitionClass<
       Params,
       ComponentType,
       ComponentTypes,
-      ExtendedComponentTypes
+      ExtendedComponentTypes,
+      HasChildren
     >;
     baseConfigWithTypes: ConfigWithTypesClass<
       InlineWidgets,
@@ -2096,11 +2107,28 @@ class ReusableDefinitionClass<
 
   twNoCodeComponent(
     twFunction: TWFunction
-  ): DefinitionNoCodeTwFunction<T, Schema, O, P, Params, TWFunction> {
-    return new DefinitionNoCodeTwFunction<T, Schema, O, P, Params, TWFunction>({
+  ): DefinitionNoCodeTwFunction<
+    T,
+    Schema,
+    O,
+    P,
+    Params,
+    TWFunction,
+    HasChildren,
+    IsReusable
+  > {
+    return new DefinitionNoCodeTwFunction<
+      T,
+      Schema,
+      O,
+      P,
+      Params,
+      TWFunction,
+      HasChildren,
+      IsReusable
+    >({
       twFunction: { twFunction },
       hasChildren: this._acceptsChildren,
-      isReusable: true,
     });
   }
 
@@ -2178,19 +2206,6 @@ class DefinitionClass<
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
   Params extends Record<string, any>,
-  // TWFunction extends (props: {
-  //   values: Schema["flattenedSchema"];
-  //   params: Params;
-  // }) => {
-  //   tw: O;
-  //   props: P;
-  // },
-  // TWFunctionReturnType extends ConvertToReactElement<
-  //   ReturnType<TWFunction>["tw"]
-  // >,
-  // ComponentFunction extends (
-  //   props: Schema["reactElements"] & TWFunctionReturnType & P
-  // ) => React.JSX.Element,
   InlineWidgets extends Record<string, InlineWidgetClass<any>>,
   TokenWidgets extends Record<string, TokenWidgetClass<any>>,
   ExternalWidgets extends Record<string, ExternalWidgetClass<any>>,
@@ -2276,14 +2291,33 @@ class DefinitionClass<
     }) => {
       tw: O;
       props: P;
-    }
+    },
+    HasChildren extends boolean,
+    IsReusable extends false
   >(
     twFunction: TWFunction
-  ): DefinitionNoCodeTwFunction<T, Schema, O, P, Params, TWFunction> {
-    return new DefinitionNoCodeTwFunction<T, Schema, O, P, Params, TWFunction>({
+  ): DefinitionNoCodeTwFunction<
+    T,
+    Schema,
+    O,
+    P,
+    Params,
+    TWFunction,
+    HasChildren,
+    IsReusable
+  > {
+    return new DefinitionNoCodeTwFunction<
+      T,
+      Schema,
+      O,
+      P,
+      Params,
+      TWFunction,
+      HasChildren,
+      IsReusable
+    >({
       twFunction: { twFunction },
-      hasChildren: false,
-      isReusable: false,
+      hasChildren: false as HasChildren,
     });
   }
 
@@ -2328,7 +2362,9 @@ interface IDefinitionNoCodeTwFunctionProps<
   }) => {
     tw: O;
     props: P;
-  }
+  },
+  HasChildren extends boolean,
+  IsReusable extends boolean
 > {
   twFunction: TWFunction;
 }
@@ -2348,11 +2384,12 @@ class DefinitionNoCodeTwFunction<
   }) => {
     tw: O;
     props: P;
-  }
+  },
+  HasChildren extends boolean,
+  IsReusable extends boolean
 > {
   _twFunction: TWFunction;
-  _hasChildren: boolean;
-  _isReusable: boolean;
+  _hasChildren: HasChildren;
 
   constructor(props: {
     twFunction: IDefinitionNoCodeTwFunctionProps<
@@ -2361,14 +2398,21 @@ class DefinitionNoCodeTwFunction<
       O,
       P,
       Params,
-      TWFunction
+      TWFunction,
+      HasChildren,
+      IsReusable
     >;
-    hasChildren: boolean;
-    isReusable: boolean;
+    hasChildren: HasChildren;
   }) {
     this._twFunction = props.twFunction.twFunction;
     this._hasChildren = props.hasChildren;
-    this._isReusable = props.isReusable;
+  }
+
+  tw(props: { values: Schema["flattenedSchema"]; params: Params }): {
+    tw: O;
+    props: P;
+  } {
+    return this._twFunction(props);
   }
 
   component<
@@ -2376,7 +2420,13 @@ class DefinitionNoCodeTwFunction<
       ReturnType<TWFunction>["tw"]
     >,
     ComponentFunction extends (
-      props: Schema["reactElements"] & TWFunctionReturnType & P
+      props: WithEasyblocksAndId<
+        WithChildren<
+          Schema["reactElements"] & TWFunctionReturnType & P,
+          HasChildren
+        >,
+        IsReusable
+      >
     ) => React.JSX.Element
   >(component: ComponentFunction): ComponentFunction {
     const newComponent = new DefinitionReactComponent<
@@ -2386,7 +2436,9 @@ class DefinitionNoCodeTwFunction<
       P,
       Params,
       TWFunctionReturnType,
-      ComponentFunction
+      ComponentFunction,
+      HasChildren,
+      IsReusable
     >({
       component,
     });
@@ -2409,8 +2461,16 @@ interface IDefinitionReactComponentProps<
   Params extends Record<string, any>,
   TWFunctionReturnType,
   ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType & P
-  ) => React.JSX.Element
+    props: WithEasyblocksAndId<
+      WithChildren<
+        Schema["reactElements"] & TWFunctionReturnType & P,
+        HasChildren
+      >,
+      IsReusable
+    >
+  ) => React.JSX.Element,
+  HasChildren extends boolean,
+  IsReusable extends boolean
 > {
   component: ComponentFunction;
 }
@@ -2426,8 +2486,16 @@ class DefinitionReactComponent<
   Params extends Record<string, any>,
   TWFunctionReturnType,
   ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType & P
-  ) => React.JSX.Element
+    props: WithEasyblocksAndId<
+      WithChildren<
+        Schema["reactElements"] & TWFunctionReturnType & P,
+        HasChildren
+      >,
+      IsReusable
+    >
+  ) => React.JSX.Element,
+  HasChildren extends boolean,
+  IsReusable extends boolean
 > {
   private _component: ComponentFunction;
 
@@ -2439,13 +2507,15 @@ class DefinitionReactComponent<
       P,
       Params,
       TWFunctionReturnType,
-      ComponentFunction
+      ComponentFunction,
+      HasChildren,
+      IsReusable
     >
   ) {
     this._component = props.component;
   }
 
-  component() {
+  component(): ComponentFunction {
     return this._component;
   }
 }

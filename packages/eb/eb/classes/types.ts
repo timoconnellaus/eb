@@ -271,3 +271,16 @@ export type WithChildren<
   T,
   HasChildren extends boolean
 > = HasChildren extends true ? T & { children: React.ReactNode } : T;
+
+type __easyblocks = {
+  id: string;
+  isEditing: boolean;
+  isSelected?: boolean | undefined;
+};
+
+export type WithEasyblocksAndId<
+  T,
+  IsReusable extends boolean
+> = IsReusable extends true
+  ? T & { _id: string }
+  : T & { _easyblocks: __easyblocks };
