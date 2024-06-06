@@ -19,7 +19,11 @@ import type {
   WidgetComponentProps,
 } from "@easyblocks/core";
 import { ZodEnum, ZodType, z } from "zod";
-import { createElement, type ComponentType, type ReactElement } from "react";
+import React, {
+  createElement,
+  type ComponentType as ReactComponentType,
+  type ReactElement,
+} from "react";
 // import { ComponentCollectionProp } from "./props/ComponentCollection";
 import type {
   ConvertToReactElement,
@@ -258,7 +262,7 @@ export const device = () => new Device();
 
 export type InlineWidgetConfig<T extends NonNullish> = {
   label?: string;
-  component: ComponentType<InlineTypeWidgetComponentProps<T>>;
+  component: ReactComponentType<InlineTypeWidgetComponentProps<T>>;
   zodType: ZodType<T, any, any>;
   validate: (value: T) => boolean;
   defaultValue: z.infer<ZodType<T, any, any>>;
@@ -267,13 +271,13 @@ export type InlineWidgetConfig<T extends NonNullish> = {
 export type InlineWidgetProps<T extends NonNullish> = {
   zodType: ZodType<T, any, any>;
   defaultValue: z.infer<ZodType<T, any, any>>;
-  component: ComponentType<InlineTypeWidgetComponentProps<T>>;
+  component: ReactComponentType<InlineTypeWidgetComponentProps<T>>;
 };
 
 // Defining WidgetOutputType as a class
 export class InlineWidgetClass<T extends NonNullish> {
   private _label: string | undefined;
-  private _component: ComponentType<InlineTypeWidgetComponentProps<T>>;
+  private _component: ReactComponentType<InlineTypeWidgetComponentProps<T>>;
   private _zodType: ZodType<T, any, any>;
   private _defaultValue: z.infer<ZodType<T, any, any>>;
   private _validateFunction: (value: T) => boolean;
@@ -395,7 +399,7 @@ export type HigherOrderCallback<T extends NonNullish> = (props: {
 
 export type ExternalWidgetConfig<EW extends NonNullish> = {
   label?: string;
-  component: ComponentType<WidgetComponentProps>;
+  component: ReactComponentType<WidgetComponentProps>;
   zodType: ZodType<EW, any, any>;
   callback: Callback<EW>;
   higherOrderCallback?: HigherOrderCallback<EW>;
@@ -404,14 +408,14 @@ export type ExternalWidgetConfig<EW extends NonNullish> = {
 
 export type ExternalWidgetProps<EW extends NonNullish> = {
   zodType: ZodType<EW, any, any>;
-  component: ComponentType<WidgetComponentProps>;
+  component: ReactComponentType<WidgetComponentProps>;
   callback: Callback<EW>;
   type: string;
 };
 
 export class ExternalWidgetClass<T extends NonNullish> {
   private _label: string | undefined;
-  private _component: ComponentType<WidgetComponentProps>;
+  private _component: ReactComponentType<WidgetComponentProps>;
   private _zodType: ZodType<T, any, any>;
   private _callback: Callback<T>;
   private _higherOrderCallback?: HigherOrderCallback<T>;
@@ -1822,9 +1826,15 @@ class ConfigWithTypesClass<
     TWFunctionReturnType extends ConvertToReactElement<
       ReturnType<TWFunction>["tw"]
     >,
-    ComponentFunction extends (
-      props: Schema["reactElements"] & TWFunctionReturnType & P
-    ) => React.JSX.Element,
+    ComponentFunction extends ReactComponentType<
+      WithEasyblocksAndId<
+        WithChildren<
+          Schema["reactElements"] & TWFunctionReturnType & P,
+          HasChildren
+        >,
+        IsReusable
+      >
+    >,
     HasChildren extends boolean,
     IsReusable extends true
   >(
@@ -1845,9 +1855,6 @@ class ConfigWithTypesClass<
     O,
     P,
     Params,
-    TWFunction,
-    TWFunctionReturnType,
-    ComponentFunction,
     InlineWidgets,
     TokenWidgets,
     ExternalWidgets,
@@ -1868,9 +1875,6 @@ class ConfigWithTypesClass<
       O,
       P,
       Params,
-      TWFunction,
-      TWFunctionReturnType,
-      ComponentFunction,
       InlineWidgets,
       TokenWidgets,
       ExternalWidgets,
@@ -1895,20 +1899,7 @@ class ConfigWithTypesClass<
     Schema extends ISchemaReturnType<U>,
     O extends Record<string, string | string[]>,
     P extends Record<string, any>,
-    Params extends Record<string, any>,
-    TWFunction extends (props: {
-      values: Schema["flattenedSchema"];
-      params: Params;
-    }) => {
-      tw: O;
-      props: P;
-    },
-    TWFunctionReturnType extends ConvertToReactElement<
-      ReturnType<TWFunction>["tw"]
-    >,
-    ComponentFunction extends (
-      props: Schema["reactElements"] & TWFunctionReturnType & P
-    ) => React.JSX.Element
+    Params extends Record<string, any>
   >(
     input: IDefinitionProps<
       U,
@@ -2016,19 +2007,6 @@ class ReusableDefinitionClass<
   O extends Record<string, string | string[]>,
   P extends Record<string, any>,
   Params extends Record<string, any>,
-  TWFunction extends (props: {
-    values: Schema["flattenedSchema"];
-    params: Params;
-  }) => {
-    tw: O;
-    props: P;
-  },
-  TWFunctionReturnType extends ConvertToReactElement<
-    ReturnType<TWFunction>["tw"]
-  >,
-  ComponentFunction extends (
-    props: Schema["reactElements"] & TWFunctionReturnType & P
-  ) => React.JSX.Element,
   InlineWidgets extends Record<string, InlineWidgetClass<any>>,
   TokenWidgets extends Record<string, TokenWidgetClass<any>>,
   ExternalWidgets extends Record<string, ExternalWidgetClass<any>>,
@@ -2044,8 +2022,7 @@ class ReusableDefinitionClass<
     TokenTypeClass<TokenWidgets, any, CustomTokens, StandardTokens>
   >,
   ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>,
-  HasChildren extends boolean,
-  IsReusable extends true = true
+  HasChildren extends boolean
 > {
   private _baseConfigWithTypes: ConfigWithTypesClass<
     InlineWidgets,
@@ -2105,7 +2082,16 @@ class ReusableDefinitionClass<
     this._baseConfigWithTypes = props.baseConfigWithTypes;
   }
 
-  twNoCodeComponent(
+  twNoCodeComponent<
+    TWFunction extends (props: {
+      values: Schema["flattenedSchema"];
+      params: Params;
+    }) => {
+      tw: O;
+      props: P;
+    },
+    IsReusable extends true
+  >(
     twFunction: TWFunction
   ): DefinitionNoCodeTwFunction<
     T,
@@ -2419,15 +2405,15 @@ class DefinitionNoCodeTwFunction<
     TWFunctionReturnType extends ConvertToReactElement<
       ReturnType<TWFunction>["tw"]
     >,
-    ComponentFunction extends (
-      props: WithEasyblocksAndId<
+    ComponentFunction extends ReactComponentType<
+      WithEasyblocksAndId<
         WithChildren<
           Schema["reactElements"] & TWFunctionReturnType & P,
           HasChildren
         >,
         IsReusable
       >
-    ) => React.JSX.Element
+    >
   >(component: ComponentFunction): ComponentFunction {
     const newComponent = new DefinitionReactComponent<
       T,
@@ -2460,15 +2446,15 @@ interface IDefinitionReactComponentProps<
   P extends Record<string, any>,
   Params extends Record<string, any>,
   TWFunctionReturnType,
-  ComponentFunction extends (
-    props: WithEasyblocksAndId<
+  ComponentFunction extends ReactComponentType<
+    WithEasyblocksAndId<
       WithChildren<
         Schema["reactElements"] & TWFunctionReturnType & P,
         HasChildren
       >,
       IsReusable
     >
-  ) => React.JSX.Element,
+  >,
   HasChildren extends boolean,
   IsReusable extends boolean
 > {
@@ -2485,15 +2471,15 @@ class DefinitionReactComponent<
   P extends Record<string, any>,
   Params extends Record<string, any>,
   TWFunctionReturnType,
-  ComponentFunction extends (
-    props: WithEasyblocksAndId<
+  ComponentFunction extends ReactComponentType<
+    WithEasyblocksAndId<
       WithChildren<
         Schema["reactElements"] & TWFunctionReturnType & P,
         HasChildren
       >,
       IsReusable
     >
-  ) => React.JSX.Element,
+  >,
   HasChildren extends boolean,
   IsReusable extends boolean
 > {
