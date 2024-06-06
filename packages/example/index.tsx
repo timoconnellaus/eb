@@ -108,6 +108,8 @@ const {
   customTypeExternalProp,
   componentCollectionProp,
   group,
+  richText,
+  text,
   noCodeComponents,
   noCodeComponentProps,
   noCodeComponentParams,
@@ -125,7 +127,7 @@ const {
   },
 });
 
-export const buttonDefinition = definition({
+export const button = definition({
   id: "button",
   type: "button",
   schema: schema({
@@ -142,13 +144,14 @@ export const buttonDefinition = definition({
   }),
 });
 
-const buttonNCC = buttonDefinition.twNoCodeComponent(({ values }) => {
+const buttonNCC = button.twNoCodeComponent(({ values }) => {
   const { height } = values;
 
   const Button = `bg-red-200 height-[${height}px]`;
 
   return {
-    Button,
+    tw: { Button },
+    props: {},
   };
 });
 
@@ -157,11 +160,19 @@ const buttonComponent = buttonNCC.component((props) => {
   return <Button.type {...Button.props} />;
 });
 
-const sectionDefinition = definition({
+const richTextTest = definition({
+  id: "@easyblocks/richtext",
+  type: "item",
+  schema: schema({}),
+  noCodeComponents: noCodeComponents({}),
+});
+
+const section = definition({
   id: "test",
   type: "section",
   schema: schema({
-    Button: componentProp([buttonDefinition]),
+    Button: componentProp(["item"]),
+    Buttons: componentCollectionProp([button, richText, text]),
     bg: colorProp(),
   }),
   noCodeComponents: noCodeComponents({
@@ -171,12 +182,13 @@ const sectionDefinition = definition({
   params: noCodeComponentParams({}),
 });
 
-const sectionNCC = sectionDefinition.twNoCodeComponent(({ values }) => {
+const sectionNCC = section.twNoCodeComponent(({ values }) => {
   const { bg } = values;
   const Section = `container mx-auto h-[100px] bg-[${bg}]`;
 
   return {
-    Section,
+    tw: { Section },
+    props: {},
   };
 });
 

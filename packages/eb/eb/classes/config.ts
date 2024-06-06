@@ -1068,49 +1068,55 @@ export class ComponentCollectionPropClass<
     TokenTypeClass<TokenWidgets, any, CustomTokens, StandardTokens>
   >,
   ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>,
-  Definitions extends DefinitionClass<
-    T,
-    Schema,
-    O,
-    P,
-    Params,
-    TWFunction,
-    TWFunctionReturnType,
-    ComponentFunction,
-    InlineWidgets,
-    TokenWidgets,
-    ExternalWidgets,
-    CustomTokens,
-    StandardTokens,
-    ComponentType,
-    ComponentTypes,
-    ExtendedComponentTypes,
-    Devices,
-    InlineTypes,
-    TokenTypes,
-    ExternalTypes
-  >[] = DefinitionClass<
-    T,
-    Schema,
-    O,
-    P,
-    Params,
-    TWFunction,
-    TWFunctionReturnType,
-    ComponentFunction,
-    InlineWidgets,
-    TokenWidgets,
-    ExternalWidgets,
-    CustomTokens,
-    StandardTokens,
-    ComponentType,
-    ComponentTypes,
-    ExtendedComponentTypes,
-    Devices,
-    InlineTypes,
-    TokenTypes,
-    ExternalTypes
-  >[]
+  Definitions extends (
+    | DefinitionClass<
+        T,
+        Schema,
+        O,
+        P,
+        Params,
+        TWFunction,
+        TWFunctionReturnType,
+        ComponentFunction,
+        InlineWidgets,
+        TokenWidgets,
+        ExternalWidgets,
+        CustomTokens,
+        StandardTokens,
+        ComponentType,
+        ComponentTypes,
+        ExtendedComponentTypes,
+        Devices,
+        InlineTypes,
+        TokenTypes,
+        ExternalTypes
+      >
+    | ExtendedComponentTypes[number]
+  )[] = (
+    | DefinitionClass<
+        T,
+        Schema,
+        O,
+        P,
+        Params,
+        TWFunction,
+        TWFunctionReturnType,
+        ComponentFunction,
+        InlineWidgets,
+        TokenWidgets,
+        ExternalWidgets,
+        CustomTokens,
+        StandardTokens,
+        ComponentType,
+        ComponentTypes,
+        ExtendedComponentTypes,
+        Devices,
+        InlineTypes,
+        TokenTypes,
+        ExternalTypes
+      >
+    | ExtendedComponentTypes[number]
+  )[]
 > extends BasePropClass<string> {
   private _components: Definitions;
 
@@ -1122,7 +1128,8 @@ export class ComponentCollectionPropClass<
   _def(): Omit<ComponentCollectionSchemaProp, "prop"> {
     return {
       type: "component-collection",
-      accepts: this._components.map((c) => c._def().id),
+      // accepts: this._components.map((c) => c._def().id),
+      accepts: [],
     };
   }
 }
@@ -1319,49 +1326,55 @@ export class ComponentPropClass<
     TokenTypeClass<TokenWidgets, any, CustomTokens, StandardTokens>
   >,
   ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>,
-  Definitions extends DefinitionClass<
-    T,
-    Schema,
-    O,
-    P,
-    Params,
-    TWFunction,
-    TWFunctionReturnType,
-    ComponentFunction,
-    InlineWidgets,
-    TokenWidgets,
-    ExternalWidgets,
-    CustomTokens,
-    StandardTokens,
-    ComponentType,
-    ComponentTypes,
-    ExtendedComponentTypes,
-    Devices,
-    InlineTypes,
-    TokenTypes,
-    ExternalTypes
-  >[] = DefinitionClass<
-    T,
-    Schema,
-    O,
-    P,
-    Params,
-    TWFunction,
-    TWFunctionReturnType,
-    ComponentFunction,
-    InlineWidgets,
-    TokenWidgets,
-    ExternalWidgets,
-    CustomTokens,
-    StandardTokens,
-    ComponentType,
-    ComponentTypes,
-    ExtendedComponentTypes,
-    Devices,
-    InlineTypes,
-    TokenTypes,
-    ExternalTypes
-  >[]
+  Definitions extends (
+    | DefinitionClass<
+        T,
+        Schema,
+        O,
+        P,
+        Params,
+        TWFunction,
+        TWFunctionReturnType,
+        ComponentFunction,
+        InlineWidgets,
+        TokenWidgets,
+        ExternalWidgets,
+        CustomTokens,
+        StandardTokens,
+        ComponentType,
+        ComponentTypes,
+        ExtendedComponentTypes,
+        Devices,
+        InlineTypes,
+        TokenTypes,
+        ExternalTypes
+      >
+    | ExtendedComponentTypes[number]
+  )[] = (
+    | DefinitionClass<
+        T,
+        Schema,
+        O,
+        P,
+        Params,
+        TWFunction,
+        TWFunctionReturnType,
+        ComponentFunction,
+        InlineWidgets,
+        TokenWidgets,
+        ExternalWidgets,
+        CustomTokens,
+        StandardTokens,
+        ComponentType,
+        ComponentTypes,
+        ExtendedComponentTypes,
+        Devices,
+        InlineTypes,
+        TokenTypes,
+        ExternalTypes
+      >
+    | ExtendedComponentTypes[number]
+  )[]
 > extends BasePropClass<string> {
   private _components: Definitions;
 
@@ -1373,7 +1386,8 @@ export class ComponentPropClass<
   _def(): Omit<ComponentSchemaProp, "prop"> {
     return {
       type: "component",
-      accepts: this._components.map((c) => c._def().id),
+      // accepts: this._components.map((c) => c._def().id),
+      accepts: [],
     };
   }
 }
@@ -1670,185 +1684,170 @@ class ConfigWithTypesClass<
     >(externalType);
   }
 
-  componentCollectionProp<
-    U extends Record<
-      string,
-      BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
-    >,
-    Schema extends ISchemaReturnType<U>,
-    O extends Record<string, string | string[]>,
-    P extends Record<string, any>,
-    Params extends Record<string, any>,
-    TWFunction extends (props: {
-      values: Schema["flattenedSchema"];
-      params: Params;
-    }) => {
-      tw: O;
-      props: P;
-    },
-    TWFunctionReturnType extends ConvertToReactElement<
-      ReturnType<TWFunction>["tw"]
-    >,
-    ComponentFunction extends (
-      props: Schema["reactElements"] & TWFunctionReturnType & P
-    ) => React.JSX.Element
-  >(
-    input: DefinitionClass<
-      U,
-      Schema,
-      O,
-      P,
-      Params,
-      TWFunction,
-      TWFunctionReturnType,
-      ComponentFunction,
-      InlineWidgets,
-      TokenWidgets,
-      ExternalWidgets,
-      CustomTokens,
-      StandardTokens,
-      ComponentType,
-      ComponentTypes,
-      ExtendedComponentTypes,
-      Devices,
-      InlineTypes,
-      TokenTypes,
-      ExternalTypes
-    >[]
+  // inbuilt components - these are available in easyblocks by default, here is the eb declarations
+  // this is so they can be be used as accepts fields in other components
+
+  public get richText() {
+    const def = this.definition({
+      id: "@easyblocks/richtext",
+      type: "item",
+      schema: this.schema({}),
+      noCodeComponents: this.noCodeComponents({}),
+    });
+    return def;
+  }
+
+  public get text() {
+    const def = this.definition({
+      id: "@easyblocks/text",
+      type: "item",
+      schema: this.schema({}),
+      noCodeComponents: this.noCodeComponents({}),
+    });
+    return def;
+  }
+
+  componentCollectionProp(
+    input: (
+      | DefinitionClass<
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any
+        >
+      | ExtendedComponentTypes[number]
+    )[]
   ): ComponentCollectionPropClass<
-    U,
-    Schema,
-    O,
-    P,
-    Params,
-    TWFunction,
-    TWFunctionReturnType,
-    ComponentFunction,
-    InlineWidgets,
-    TokenWidgets,
-    ExternalWidgets,
-    CustomTokens,
-    StandardTokens,
-    ComponentType,
-    ComponentTypes,
-    ExtendedComponentTypes,
-    Devices,
-    InlineTypes,
-    TokenTypes,
-    ExternalTypes
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any
   > {
     return new ComponentCollectionPropClass<
-      U,
-      Schema,
-      O,
-      P,
-      Params,
-      TWFunction,
-      TWFunctionReturnType,
-      ComponentFunction,
-      InlineWidgets,
-      TokenWidgets,
-      ExternalWidgets,
-      CustomTokens,
-      StandardTokens,
-      ComponentType,
-      ComponentTypes,
-      ExtendedComponentTypes,
-      Devices,
-      InlineTypes,
-      TokenTypes,
-      ExternalTypes
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any
     >(input);
   }
 
-  componentProp<
-    U extends Record<
-      string,
-      BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
-    >,
-    Schema extends ISchemaReturnType<U>,
-    O extends Record<string, string | string[]>,
-    P extends Record<string, any>,
-    Params extends Record<string, any>,
-    TWFunction extends (props: {
-      values: Schema["flattenedSchema"];
-      params: Params;
-    }) => {
-      tw: O;
-      props: P;
-    },
-    TWFunctionReturnType extends ConvertToReactElement<
-      ReturnType<TWFunction>["tw"]
-    >,
-    ComponentFunction extends (
-      props: Schema["reactElements"] & TWFunctionReturnType & P
-    ) => React.JSX.Element
-  >(
-    input: DefinitionClass<
-      U,
-      Schema,
-      O,
-      P,
-      Params,
-      TWFunction,
-      TWFunctionReturnType,
-      ComponentFunction,
-      InlineWidgets,
-      TokenWidgets,
-      ExternalWidgets,
-      CustomTokens,
-      StandardTokens,
-      ComponentType,
-      ComponentTypes,
-      ExtendedComponentTypes,
-      Devices,
-      InlineTypes,
-      TokenTypes,
-      ExternalTypes
-    >[]
+  componentProp(
+    input: (
+      | DefinitionClass<
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any
+        >
+      | ExtendedComponentTypes[number]
+    )[]
   ): ComponentPropClass<
-    U,
-    Schema,
-    O,
-    P,
-    Params,
-    TWFunction,
-    TWFunctionReturnType,
-    ComponentFunction,
-    InlineWidgets,
-    TokenWidgets,
-    ExternalWidgets,
-    CustomTokens,
-    StandardTokens,
-    ComponentType,
-    ComponentTypes,
-    ExtendedComponentTypes,
-    Devices,
-    InlineTypes,
-    TokenTypes,
-    ExternalTypes
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any
   > {
     return new ComponentPropClass<
-      U,
-      Schema,
-      O,
-      P,
-      Params,
-      TWFunction,
-      TWFunctionReturnType,
-      ComponentFunction,
-      InlineWidgets,
-      TokenWidgets,
-      ExternalWidgets,
-      CustomTokens,
-      StandardTokens,
-      ComponentType,
-      ComponentTypes,
-      ExtendedComponentTypes,
-      Devices,
-      InlineTypes,
-      TokenTypes,
-      ExternalTypes
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any
     >(input);
   }
 
