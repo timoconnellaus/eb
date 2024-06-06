@@ -1660,7 +1660,6 @@ class ConfigWithTypesClass<
       id: "@easyblocks/richtext",
       type: "item",
       schema: this.schema({}),
-      noCodeComponents: this.noCodeComponents({}),
     });
     return def;
   }
@@ -1670,7 +1669,6 @@ class ConfigWithTypesClass<
       id: "@easyblocks/text",
       type: "item",
       schema: this.schema({}),
-      noCodeComponents: this.noCodeComponents({}),
     });
     return def;
   }
@@ -1973,7 +1971,7 @@ interface IReusableDefinitionProps<
   HasChildren extends boolean
 > {
   schema: Schema;
-  noCodeComponents: ZodType<O, any, any>;
+  // noCodeComponents: ZodType<O, any, any>;
   props?: ZodType<P, any, any>;
   acceptsChildren: HasChildren;
 }
@@ -1993,7 +1991,7 @@ interface IReusableDefinitionDef<
 > {
   flattenedSchema: FlattenSchema<T>;
   reactElements: FlattenSchemaAndCastToReactElement<T>;
-  noCodeComponents: ZodType<O, any, any>;
+  // noCodeComponents: ZodType<O, any, any>;
   props: ZodType<P, any, any> | z.ZodObject<any, any>;
   acceptsChildren: boolean;
 }
@@ -2042,7 +2040,7 @@ class ReusableDefinitionClass<
   private _schema: T;
   private _flattenedSchema: FlattenSchema<T>;
   private _schemaReactElements: FlattenSchemaAndCastToReactElement<T>;
-  private _noCodeComponents: ZodType<O, any, any>;
+  // private _noCodeComponents: ZodType<O, any, any>;
   private _props?: ZodType<P, any, any>;
   private _acceptsChildren: HasChildren;
 
@@ -2076,7 +2074,7 @@ class ReusableDefinitionClass<
     this._schema = props.def.schema.schema;
     this._flattenedSchema = props.def.schema.flattenedSchema;
     this._schemaReactElements = props.def.schema.reactElements;
-    this._noCodeComponents = props.def.noCodeComponents;
+    // this._noCodeComponents = props.def.noCodeComponents;
     this._props = props.def.props;
     this._acceptsChildren = props.def.acceptsChildren;
     this._baseConfigWithTypes = props.baseConfigWithTypes;
@@ -2131,7 +2129,7 @@ class ReusableDefinitionClass<
     return {
       flattenedSchema: this._flattenedSchema,
       reactElements: this._schemaReactElements,
-      noCodeComponents: this._noCodeComponents,
+      // noCodeComponents: this._noCodeComponents,
       acceptsChildren: this._acceptsChildren,
       props: this._props ?? z.object({}),
     };
@@ -2156,7 +2154,7 @@ interface IDefinitionProps<
   id: string;
   schema: Schema;
   type: ExtendedComponentTypes[number] | Array<ExtendedComponentTypes[number]>;
-  noCodeComponents: ZodType<O, any, any>;
+  // noCodeComponents: ZodType<O, any, any>;
   props?: ZodType<P, any, any>;
   params?: ZodType<Params, any, any>;
 }
@@ -2178,7 +2176,7 @@ interface IDefinitionDef<
   flattenedSchema: FlattenSchema<T>;
   reactElements: FlattenSchemaAndCastToReactElement<T>;
   type: ExtendedComponentTypes[number] | Array<ExtendedComponentTypes[number]>;
-  noCodeComponents: ZodType<O, any, any>;
+  // noCodeComponents: ZodType<O, any, any>;
   props: ZodType<P, any, any> | z.ZodObject<any, any>;
   params: ZodType<Params, any, any> | z.ZodObject<any, any>;
 }
@@ -2229,7 +2227,7 @@ class DefinitionClass<
   private _type:
     | ExtendedComponentTypes[number]
     | Array<ExtendedComponentTypes[number]>;
-  private _noCodeComponents: ZodType<O, any, any>;
+  // private _noCodeComponents: ZodType<O, any, any>;
   private _props?: ZodType<P, any, any>;
   private _params?: ZodType<Params, any, any>;
 
@@ -2264,7 +2262,7 @@ class DefinitionClass<
     this._flattenedSchema = props.def.schema.flattenedSchema;
     this._schemaReactElements = props.def.schema.reactElements;
     this._type = props.def.type;
-    this._noCodeComponents = props.def.noCodeComponents;
+    // this._noCodeComponents = props.def.noCodeComponents;
     this._props = props.def.props;
     this._params = props.def.params;
     this._baseConfigWithTypes = props.baseConfigWithTypes;
@@ -2322,7 +2320,7 @@ class DefinitionClass<
       flattenedSchema: this._flattenedSchema,
       reactElements: this._schemaReactElements,
       type: this._type,
-      noCodeComponents: this._noCodeComponents,
+      // noCodeComponents: this._noCodeComponents,
       props: this._props ?? z.object({}),
       params: this._params ?? z.object({}),
     };
