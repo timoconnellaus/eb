@@ -29,8 +29,10 @@ import type {
 } from "./types";
 
 ////////////////////////////////////////////////////////////////////////////////
-// #region DEVICES
+// #region CONSTANTS
 ////////////////////////////////////////////////////////////////////////////////
+
+// #region DEVICES CONSTANTS
 
 const xs = {
   w: 375,
@@ -84,6 +86,15 @@ export const DEFAULT_DEVICES = {
   xl,
   "2xl": _2xl,
 } as const;
+
+// #region DEFAULT COMPONENT TYPES
+
+const DEFAULT_COMPONENTS = ["item"];
+type DEFAULT_COMPONENTS_TYPE = "item";
+
+////////////////////////////////////////////////////////////////////////////////
+// #region DEVICES
+////////////////////////////////////////////////////////////////////////////////
 
 export type DeviceType = {
   w: number;
@@ -771,6 +782,7 @@ interface IBaseConfigProps<
   StandardTokens extends Partial<IStandardTokenTypes>,
   ComponentType extends string,
   ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
   Devices extends DevicesClass
 > {
   widgets: WidgetsClass<InlineWidgets, TokenWidgets, ExternalWidgets>;
@@ -787,6 +799,7 @@ class BaseConfigClass<
   StandardTokens extends Partial<IStandardTokenTypes>,
   ComponentType extends string,
   ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
   Devices extends DevicesClass
 > {
   private _widgets: WidgetsClass<InlineWidgets, TokenWidgets, ExternalWidgets>;
@@ -803,6 +816,7 @@ class BaseConfigClass<
       StandardTokens,
       ComponentType,
       ComponentTypes,
+      ExtendedComponentTypes,
       Devices
     >
   ) {
@@ -849,6 +863,7 @@ class BaseConfigClass<
       StandardTokens,
       ComponentType,
       ComponentTypes,
+      ExtendedComponentTypes,
       Devices,
       InlineTypes,
       TokenTypes,
@@ -862,6 +877,7 @@ class BaseConfigClass<
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices,
     InlineTypes,
     TokenTypes,
@@ -875,6 +891,7 @@ class BaseConfigClass<
       StandardTokens,
       ComponentType,
       ComponentTypes,
+      ExtendedComponentTypes,
       Devices,
       InlineTypes,
       TokenTypes,
@@ -896,6 +913,7 @@ export const config = <
   StandardTokens extends Partial<IStandardTokenTypes>,
   ComponentType extends string,
   ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
   Devices extends DevicesClass
 >(
   props: IBaseConfigProps<
@@ -906,6 +924,7 @@ export const config = <
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices
   >
 ) =>
@@ -917,6 +936,7 @@ export const config = <
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices
   >(props);
 
@@ -1040,6 +1060,7 @@ export class ComponentCollectionPropClass<
   StandardTokens extends Partial<IStandardTokenTypes>,
   ComponentType extends string,
   ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
   Devices extends DevicesClass,
   InlineTypes extends Record<string, InlineTypeClass<InlineWidgets, any>>,
   TokenTypes extends Record<
@@ -1063,6 +1084,7 @@ export class ComponentCollectionPropClass<
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices,
     InlineTypes,
     TokenTypes,
@@ -1083,6 +1105,7 @@ export class ComponentCollectionPropClass<
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices,
     InlineTypes,
     TokenTypes,
@@ -1288,6 +1311,7 @@ export class ComponentPropClass<
   StandardTokens extends Partial<IStandardTokenTypes>,
   ComponentType extends string,
   ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
   Devices extends DevicesClass,
   InlineTypes extends Record<string, InlineTypeClass<InlineWidgets, any>>,
   TokenTypes extends Record<
@@ -1311,6 +1335,7 @@ export class ComponentPropClass<
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices,
     InlineTypes,
     TokenTypes,
@@ -1331,6 +1356,7 @@ export class ComponentPropClass<
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices,
     InlineTypes,
     TokenTypes,
@@ -1451,6 +1477,7 @@ interface IConfigWithTypesPropsUser<
   StandardTokens extends Partial<IStandardTokenTypes>,
   ComponentType extends string,
   ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
   Devices extends DevicesClass,
   InlineTypes extends Record<string, InlineTypeClass<InlineWidgets, any>>,
   TokenTypes extends Record<
@@ -1472,6 +1499,7 @@ interface IConfigWithTypesProps<
   StandardTokens extends Partial<IStandardTokenTypes>,
   ComponentType extends string,
   ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
   Devices extends DevicesClass,
   InlineTypes extends Record<string, InlineTypeClass<InlineWidgets, any>>,
   TokenTypes extends Record<
@@ -1487,6 +1515,7 @@ interface IConfigWithTypesProps<
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices,
     InlineTypes,
     TokenTypes,
@@ -1500,6 +1529,7 @@ interface IConfigWithTypesProps<
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices
   >;
 }
@@ -1523,6 +1553,7 @@ class ConfigWithTypesClass<
   StandardTokens extends Partial<IStandardTokenTypes>,
   ComponentType extends string,
   ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
   Devices extends DevicesClass,
   InlineTypes extends Record<string, InlineTypeClass<InlineWidgets, any>>,
   TokenTypes extends Record<
@@ -1539,6 +1570,7 @@ class ConfigWithTypesClass<
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices
   >;
 
@@ -1551,6 +1583,7 @@ class ConfigWithTypesClass<
       StandardTokens,
       ComponentType,
       ComponentTypes,
+      ExtendedComponentTypes,
       Devices,
       InlineTypes,
       TokenTypes,
@@ -1676,6 +1709,7 @@ class ConfigWithTypesClass<
       StandardTokens,
       ComponentType,
       ComponentTypes,
+      ExtendedComponentTypes,
       Devices,
       InlineTypes,
       TokenTypes,
@@ -1697,6 +1731,7 @@ class ConfigWithTypesClass<
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices,
     InlineTypes,
     TokenTypes,
@@ -1718,6 +1753,7 @@ class ConfigWithTypesClass<
       StandardTokens,
       ComponentType,
       ComponentTypes,
+      ExtendedComponentTypes,
       Devices,
       InlineTypes,
       TokenTypes,
@@ -1764,6 +1800,7 @@ class ConfigWithTypesClass<
       StandardTokens,
       ComponentType,
       ComponentTypes,
+      ExtendedComponentTypes,
       Devices,
       InlineTypes,
       TokenTypes,
@@ -1785,6 +1822,7 @@ class ConfigWithTypesClass<
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices,
     InlineTypes,
     TokenTypes,
@@ -1806,6 +1844,7 @@ class ConfigWithTypesClass<
       StandardTokens,
       ComponentType,
       ComponentTypes,
+      ExtendedComponentTypes,
       Devices,
       InlineTypes,
       TokenTypes,
@@ -1818,6 +1857,85 @@ class ConfigWithTypesClass<
   noCodeComponents = z.object;
   noCodeComponentProps = z.object;
   noCodeComponentParams = z.object;
+
+  reusableDefinition<
+    U extends Record<
+      string,
+      BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+    >,
+    Schema extends ISchemaReturnType<U>,
+    O extends Record<string, string | string[]>,
+    P extends Record<string, any>,
+    Params extends Record<string, any>,
+    TWFunction extends (props: {
+      values: Schema["flattenedSchema"];
+      params: Params;
+    }) => {
+      tw: O;
+      props: P;
+    },
+    TWFunctionReturnType extends ConvertToReactElement<
+      ReturnType<TWFunction>["tw"]
+    >,
+    ComponentFunction extends (
+      props: Schema["reactElements"] & TWFunctionReturnType & P
+    ) => React.JSX.Element
+  >(
+    input: IReusableDefinitionProps<
+      U,
+      Schema,
+      O,
+      P,
+      Params,
+      ComponentType,
+      ComponentTypes,
+      ExtendedComponentTypes
+    >
+  ): ReusableDefinitionClass<
+    U,
+    Schema,
+    O,
+    P,
+    Params,
+    TWFunction,
+    TWFunctionReturnType,
+    ComponentFunction,
+    InlineWidgets,
+    TokenWidgets,
+    ExternalWidgets,
+    CustomTokens,
+    StandardTokens,
+    ComponentType,
+    ComponentTypes,
+    ExtendedComponentTypes,
+    Devices,
+    InlineTypes,
+    TokenTypes,
+    ExternalTypes
+  > {
+    return new ReusableDefinitionClass<
+      U,
+      Schema,
+      O,
+      P,
+      Params,
+      TWFunction,
+      TWFunctionReturnType,
+      ComponentFunction,
+      InlineWidgets,
+      TokenWidgets,
+      ExternalWidgets,
+      CustomTokens,
+      StandardTokens,
+      ComponentType,
+      ComponentTypes,
+      ExtendedComponentTypes,
+      Devices,
+      InlineTypes,
+      TokenTypes,
+      ExternalTypes
+    >({ def: input, baseConfigWithTypes: this });
+  }
 
   definition<
     U extends Record<
@@ -1849,7 +1967,8 @@ class ConfigWithTypesClass<
       P,
       Params,
       ComponentType,
-      ComponentTypes
+      ComponentTypes,
+      ExtendedComponentTypes
     >
   ): DefinitionClass<
     U,
@@ -1867,6 +1986,7 @@ class ConfigWithTypesClass<
     StandardTokens,
     ComponentType,
     ComponentTypes,
+    ExtendedComponentTypes,
     Devices,
     InlineTypes,
     TokenTypes,
@@ -1888,17 +2008,204 @@ class ConfigWithTypesClass<
       StandardTokens,
       ComponentType,
       ComponentTypes,
+      ExtendedComponentTypes,
       Devices,
       InlineTypes,
       TokenTypes,
       ExternalTypes
-    >(input);
+    >({ def: input, baseConfigWithTypes: this });
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // #region DEFINITION
 ////////////////////////////////////////////////////////////////////////////////
+
+// #region REUSABLE DEFINITION
+
+interface IReusableDefinitionProps<
+  T extends Record<
+    string,
+    BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+  >,
+  Schema extends ISchemaReturnType<T>,
+  O extends Record<string, string | string[]>,
+  P extends Record<string, any>,
+  Params extends Record<string, any>,
+  ComponentType extends string,
+  ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE]
+> {
+  schema: Schema;
+  noCodeComponents: ZodType<O, any, any>;
+  props?: ZodType<P, any, any>;
+  acceptsChildren: boolean;
+}
+
+interface IReusableDefinitionDef<
+  T extends Record<
+    string,
+    BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+  >,
+  Schema extends ISchemaReturnType<T>,
+  O extends Record<string, string | string[]>,
+  P extends Record<string, any>,
+  Params extends Record<string, any>,
+  ComponentType extends string,
+  ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE]
+> {
+  flattenedSchema: FlattenSchema<T>;
+  reactElements: FlattenSchemaAndCastToReactElement<T>;
+  noCodeComponents: ZodType<O, any, any>;
+  props: ZodType<P, any, any> | z.ZodObject<any, any>;
+  acceptsChildren: boolean;
+}
+
+class ReusableDefinitionClass<
+  T extends Record<
+    string,
+    BasePropClass<any> | GroupClass<Record<string, BasePropClass<any>>>
+  >,
+  Schema extends ISchemaReturnType<T>,
+  O extends Record<string, string | string[]>,
+  P extends Record<string, any>,
+  Params extends Record<string, any>,
+  TWFunction extends (props: {
+    values: Schema["flattenedSchema"];
+    params: Params;
+  }) => {
+    tw: O;
+    props: P;
+  },
+  TWFunctionReturnType extends ConvertToReactElement<
+    ReturnType<TWFunction>["tw"]
+  >,
+  ComponentFunction extends (
+    props: Schema["reactElements"] & TWFunctionReturnType & P
+  ) => React.JSX.Element,
+  InlineWidgets extends Record<string, InlineWidgetClass<any>>,
+  TokenWidgets extends Record<string, TokenWidgetClass<any>>,
+  ExternalWidgets extends Record<string, ExternalWidgetClass<any>>,
+  CustomTokens extends Record<string, TokenSetClass<any, any, any>>,
+  StandardTokens extends Partial<IStandardTokenTypes>,
+  ComponentType extends string,
+  ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
+  Devices extends DevicesClass,
+  InlineTypes extends Record<string, InlineTypeClass<InlineWidgets, any>>,
+  TokenTypes extends Record<
+    string,
+    TokenTypeClass<TokenWidgets, any, CustomTokens, StandardTokens>
+  >,
+  ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>
+> {
+  private _baseConfigWithTypes: ConfigWithTypesClass<
+    InlineWidgets,
+    TokenWidgets,
+    ExternalWidgets,
+    CustomTokens,
+    StandardTokens,
+    ComponentType,
+    ComponentTypes,
+    ExtendedComponentTypes,
+    Devices,
+    InlineTypes,
+    TokenTypes,
+    ExternalTypes
+  >;
+
+  private _schema: T;
+  private _flattenedSchema: FlattenSchema<T>;
+  private _schemaReactElements: FlattenSchemaAndCastToReactElement<T>;
+  private _noCodeComponents: ZodType<O, any, any>;
+  private _props?: ZodType<P, any, any>;
+  private _acceptsChildren: boolean;
+
+  constructor(props: {
+    def: IReusableDefinitionProps<
+      T,
+      Schema,
+      O,
+      P,
+      Params,
+      ComponentType,
+      ComponentTypes,
+      ExtendedComponentTypes
+    >;
+    baseConfigWithTypes: ConfigWithTypesClass<
+      InlineWidgets,
+      TokenWidgets,
+      ExternalWidgets,
+      CustomTokens,
+      StandardTokens,
+      ComponentType,
+      ComponentTypes,
+      ExtendedComponentTypes,
+      Devices,
+      InlineTypes,
+      TokenTypes,
+      ExternalTypes
+    >;
+  }) {
+    this._schema = props.def.schema.schema;
+    this._flattenedSchema = props.def.schema.flattenedSchema;
+    this._schemaReactElements = props.def.schema.reactElements;
+    this._noCodeComponents = props.def.noCodeComponents;
+    this._props = props.def.props;
+    this._acceptsChildren = props.def.acceptsChildren;
+    this._baseConfigWithTypes = props.baseConfigWithTypes;
+  }
+
+  twNoCodeComponent(
+    twFunction: TWFunction
+  ): DefinitionNoCodeTwFunction<
+    T,
+    Schema,
+    O,
+    P,
+    Params,
+    TWFunction,
+    TWFunctionReturnType,
+    ComponentFunction
+  > {
+    return new DefinitionNoCodeTwFunction<
+      T,
+      Schema,
+      O,
+      P,
+      Params,
+      TWFunction,
+      TWFunctionReturnType,
+      ComponentFunction
+    >({
+      twFunction: { twFunction },
+      hasChildren: this._acceptsChildren,
+      isReusable: true,
+    });
+  }
+
+  _def(): IReusableDefinitionDef<
+    T,
+    Schema,
+    O,
+    P,
+    Params,
+    ComponentType,
+    ComponentTypes,
+    ExtendedComponentTypes
+  > {
+    return {
+      flattenedSchema: this._flattenedSchema,
+      reactElements: this._schemaReactElements,
+      noCodeComponents: this._noCodeComponents,
+      acceptsChildren: this._acceptsChildren,
+      props: this._props ?? z.object({}),
+    };
+  }
+}
+
+// #region DEFINITION
 
 interface IDefinitionProps<
   T extends Record<
@@ -1910,11 +2217,12 @@ interface IDefinitionProps<
   P extends Record<string, any>,
   Params extends Record<string, any>,
   ComponentType extends string,
-  ComponentTypes extends ComponentType[]
+  ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE]
 > {
   id: string;
   schema: Schema;
-  type: ComponentTypes[number] | Array<ComponentTypes[number]>;
+  type: ExtendedComponentTypes[number] | Array<ExtendedComponentTypes[number]>;
   noCodeComponents: ZodType<O, any, any>;
   props?: ZodType<P, any, any>;
   params?: ZodType<Params, any, any>;
@@ -1930,12 +2238,13 @@ interface IDefinitionDef<
   P extends Record<string, any>,
   Params extends Record<string, any>,
   ComponentType extends string,
-  ComponentTypes extends ComponentType[]
+  ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE]
 > {
   id: string;
   flattenedSchema: FlattenSchema<T>;
   reactElements: FlattenSchemaAndCastToReactElement<T>;
-  type: ComponentTypes[number] | Array<ComponentTypes[number]>;
+  type: ExtendedComponentTypes[number] | Array<ExtendedComponentTypes[number]>;
   noCodeComponents: ZodType<O, any, any>;
   props: ZodType<P, any, any> | z.ZodObject<any, any>;
   params: ZodType<Params, any, any> | z.ZodObject<any, any>;
@@ -1970,6 +2279,7 @@ class DefinitionClass<
   StandardTokens extends Partial<IStandardTokenTypes>,
   ComponentType extends string,
   ComponentTypes extends ComponentType[],
+  ExtendedComponentTypes extends [...ComponentTypes, DEFAULT_COMPONENTS_TYPE],
   Devices extends DevicesClass,
   InlineTypes extends Record<string, InlineTypeClass<InlineWidgets, any>>,
   TokenTypes extends Record<
@@ -1978,34 +2288,66 @@ class DefinitionClass<
   >,
   ExternalTypes extends Record<string, ExternalType<ExternalWidgets, any>>
 > {
+  private _baseConfigWithTypes: ConfigWithTypesClass<
+    InlineWidgets,
+    TokenWidgets,
+    ExternalWidgets,
+    CustomTokens,
+    StandardTokens,
+    ComponentType,
+    ComponentTypes,
+    ExtendedComponentTypes,
+    Devices,
+    InlineTypes,
+    TokenTypes,
+    ExternalTypes
+  >;
   private _id: string;
   private _schema: T;
   private _flattenedSchema: FlattenSchema<T>;
   private _schemaReactElements: FlattenSchemaAndCastToReactElement<T>;
-  private _type: ComponentTypes[number] | Array<ComponentTypes[number]>;
+  private _type:
+    | ExtendedComponentTypes[number]
+    | Array<ExtendedComponentTypes[number]>;
   private _noCodeComponents: ZodType<O, any, any>;
   private _props?: ZodType<P, any, any>;
   private _params?: ZodType<Params, any, any>;
 
-  constructor(
-    props: IDefinitionProps<
+  constructor(props: {
+    def: IDefinitionProps<
       T,
       Schema,
       O,
       P,
       Params,
       ComponentType,
-      ComponentTypes
-    >
-  ) {
-    this._id = props.id;
-    this._schema = props.schema.schema;
-    this._flattenedSchema = props.schema.flattenedSchema;
-    this._schemaReactElements = props.schema.reactElements;
-    this._type = props.type;
-    this._noCodeComponents = props.noCodeComponents;
-    this._props = props.props;
-    this._params = props.params;
+      ComponentTypes,
+      ExtendedComponentTypes
+    >;
+    baseConfigWithTypes: ConfigWithTypesClass<
+      InlineWidgets,
+      TokenWidgets,
+      ExternalWidgets,
+      CustomTokens,
+      StandardTokens,
+      ComponentType,
+      ComponentTypes,
+      ExtendedComponentTypes,
+      Devices,
+      InlineTypes,
+      TokenTypes,
+      ExternalTypes
+    >;
+  }) {
+    this._id = props.def.id;
+    this._schema = props.def.schema.schema;
+    this._flattenedSchema = props.def.schema.flattenedSchema;
+    this._schemaReactElements = props.def.schema.reactElements;
+    this._type = props.def.type;
+    this._noCodeComponents = props.def.noCodeComponents;
+    this._props = props.def.props;
+    this._params = props.def.params;
+    this._baseConfigWithTypes = props.baseConfigWithTypes;
   }
 
   twNoCodeComponent(
@@ -2030,7 +2372,9 @@ class DefinitionClass<
       TWFunctionReturnType,
       ComponentFunction
     >({
-      twFunction,
+      twFunction: { twFunction },
+      hasChildren: false,
+      isReusable: false,
     });
   }
 
@@ -2041,7 +2385,8 @@ class DefinitionClass<
     P,
     Params,
     ComponentType,
-    ComponentTypes
+    ComponentTypes,
+    ExtendedComponentTypes
   > {
     return {
       id: this._id,
@@ -2103,11 +2448,24 @@ class DefinitionNoCodeTwFunction<
   ) => React.JSX.Element
 > {
   _twFunction: TWFunction;
+  _hasChildren: boolean;
+  _isReusable: boolean;
 
-  constructor(
-    props: IDefinitionNoCodeTwFunctionProps<T, Schema, O, P, Params, TWFunction>
-  ) {
-    this._twFunction = props.twFunction;
+  constructor(props: {
+    twFunction: IDefinitionNoCodeTwFunctionProps<
+      T,
+      Schema,
+      O,
+      P,
+      Params,
+      TWFunction
+    >;
+    hasChildren: boolean;
+    isReusable: boolean;
+  }) {
+    this._twFunction = props.twFunction.twFunction;
+    this._hasChildren = props.hasChildren;
+    this._isReusable = props.isReusable;
   }
 
   component(component: ComponentFunction): ComponentFunction {
